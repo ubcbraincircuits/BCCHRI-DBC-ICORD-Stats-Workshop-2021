@@ -1,11 +1,10 @@
 load the distribution
+
 ```{r}
-#this is something non-gaussian that Jeff made up.  Meant to mimic the
-#Verizon data from the textbook chapter 18.  Then take a look at it using
-#hist.
+#this is something non-gaussian that Jeff made up.  Meant to mimic non-normal dat. Let's take a look at it using hist.
 
 load("dat.rda")
-hist(dat,breaks=20)
+hist(dat,breaks=30)
 ```
 
 ## NB: R has some built in functions for doing resampling, bootstraping, etc
@@ -25,23 +24,255 @@ And there are more online... I will mention a few of them as we go. We will also
 
 # example for 10 values from 1 - 10:
 
-randi(10,1,10)
+sample.int(10,10,replace=TRUE)
 
 # So the indices (store in a variable called ind) for our resample can be 
 # found like this:
-ind=randi(1550,1,1550);
+ind=sample.int(1550,1550,replace=TRUE)
 
-# or get matlab to get the size of the sample using numel
-ind=randi(numel(dat),1,numel(dat));
+# or get R to get the size of the sample using numel
+ind=sample.int(length(dat),length(dat),replace=TRUE)
 
 # So to get our resample all we need to do is index dat with ind and assign
 # the result to a new variable.  Call it dat_RS.
-dat_RS=dat(ind);
+dat_RS=dat[ind]
 ```
 
 take a look at our resample:
 Use hist!
 
 ```{r}
-plot(pressure)
+hist(dat_RS,breaks=30)
+
+#unless you get a peculiar resample it should look pretty much like the
+#original one.
 ```
+##So now we should probably write a function to do the resampling for us
+
+```{r}
+# Use 2 inputs. 1. the data, can be called dat 2. the number of resamples, nresamps.
+# Store your resamples in a matrix as output, call it resamps_out.  Remember to
+# comment your code!!
+
+make_resamples = function(dat,nresamps){
+#make_samples function returns nresamps of data stored in dat
+#inputs:
+# dat: this is the data, should be a 1xn matrix
+# nresamps: this is how many resamples we will calculate
+# outputs:
+# resamps_out: this is an nresamps x n matrix, stores all of our resamples.
+
+resamps_out=matrix(nrow=nresamps,ncol=length(dat))
+
+for (i in 1:nresamps) {
+    #generate random numbers for resample
+    ind=sample.int(length(dat),length(dat),replace=TRUE)
+    # index data with new indices
+    dat_RS=dat[ind]
+    # store in output matrix
+    resamps_out[i,]=dat_RS
+}
+    return(resamps_out)
+}
+```
+
+```{r}
+# Write a command using our function to do 10 resamples.
+
+dat_RS=make_resamples(dat,10)
+
+# take a look at the resamples to see how their histograms look, do a loop
+# and a subplot.
+
+par(mfrow=c(2,5))
+for (i in 1:10) {
+    hist(dat_RS[i,],breaks=20,main="",xlab="",ylab="")
+}
+# Pretty similiar??  Should be...
+```
+ok, now that we can generate lots of resamples let's look at the mean and distribution of each.
+```{r}
+# let's get 2000 resamples
+
+dat_RS=make_resamples(dat,2000)
+
+# easy to find the mean of the resamples.  Use mean and specify the second
+# dimension.  Store the result in avg_RS
+
+avg_RS=apply(dat_RS,1,mean)
+
+# So now we have the mean for each resample.  plot the distribution of
+# that using hist again.
+
+hist(avg_RS,breaks=30)
+
+# Btw, what was our actual sample mean?
+
+mean(dat)
+```
+Where do you expect this to fall on the histogram?  What shape should this
+distribution have?
+
+What is this distribution?
+
+It's the bootstrap distriubtion of the sample mean.
+
+Let's try it again, this time using R's most popular bootstrapping package!
+you will likely need to install the package by plugging install.packages("boot")
+```{r}
+#Check the boot package doc using help("boot") There is a lot of information in this help file, but you should focus on the first 3 inputs. Use the function to find the means of 2000
+#resamples. store the result in a matrix called m for mean.
+
+library(boot)
+
+# The statistic input is not intuitive, so I have added in a function that is the proper function
+samplemean <- function(data, i) {
+  d=data[i]
+  return(mean(d))
+}
+
+output = boot(data=dat,statistic=samplemean,R=2000);
+m = output$t
+```
+How about the standard error?
+
+```{r}
+# using our bootstrap distribution, call it avg_RS_se
+avg_RS_se=sd(avg_RS)
+```
+And confidence intervals?
+```{r}
+# a few different options here: option 1.  My sampling distribution looks
+# Normal.  Then you can use critical t values and all is well.
+
+#!!!!# Make sure to have already mentioned this equation in the slides somewhere during the t-test 
+#!!!!# section if you are going to call it familiar
+# familiar equation stat +/- t*SE_stat 
+# for alpha=0.05;
+alpha=0.05
+tcrit = qt(1-alpha/2,1550);
+mean(m)-tcrit*sd(m)
+mean(m)+tcrit*sd(m)
+
+# Ok, but what if it is not Normal?  Then what?
+# Then you can look at the percentiles to make a CI
+
+per_ci=boot.ci(output, type="perc")
+print(per_ci)
+# Does it make sense?  Figure out how many elements in our bootstrap
+# distribution fall within these limits.  Use numel and find perhaps.
+
+print(length(which(m>per_ci$percent[,4] & m < per_ci$percent[,5]))/length(m))
+
+# Nice.  Willing to except a little descrepancy here since the bootci is
+# calculating a new bootstrap distribution compared to the one we used for
+# m.
+
+# or perhaps use the bias corrected accelerated confidence interval?
+bca_ci=boot.ci(output, type="bca")
+print(bca_ci)
+# It adjusts to correct for bias and skewness in the bootstrap distribution.
+```
+
+Permutation testing.
+```{r}
+#Let's make a couple of normal samples.  Call them x1 and x2.
+# give x1 a mean of 1 and std of 2 and 27 data points
+# give x2 a mean of 2 and std of 3 and 47 data points
+# recall the R function rnorm gives random numbers taken from a
+# normal distribution.
+
+x1=2*rnorm(27)+1
+x2=3*rnorm(47)+2
+
+# take a look at each of them using hist.
+
+hist(x1)
+hist(x2)
+
+# and we want to look at the difference of the means? So calculate the
+# observed difference from the samples.  Store in x_diff_obs.
+
+x_diff_obs=mean(x2)-mean(x1)
+
+# ok our null hypothesis is that there is no difference between the means
+# of the two samples.  So we can build a distribution by resampling as if
+# this were the case.  Call it the permutation distribution to distinguish 
+# it from the bootstrap.  We have a total of 27 + 47=74 observtions.  Let's put
+# them all together in a big vector by concatenation, call it x:
+
+x=c(x1, x2)
+
+```
+now let's modify our make_resamples so that we can get resamples with a
+specific number of data points.  Start by saving your function with a new
+name make_samples2.  Don't forget to rename the function.  Add an extra
+input argument called nsamp which will be the number of data points in
+the resample.  Don't forget to update your comments.
+```{r}
+make_resamples2 = function(dat,nresamps,nsamps) {
+#make_resamples This function resamples an input data set a specified
+#number of times
+# inputs:
+# dat: 1xn matrix/vector containing the data to resample.
+# nresamps: the number of resamples to do.
+# nsamp: number of data point in the resample.  
+# 
+# outputs
+#resamps_out: nresamps x nsamp matrix containg the nresamps resamples of dat.
+#each resample has nsamp data points.
+
+# ok.  First step is to prep the output matrix, I usually use zeros for
+# this.
+resamps_out=matrix(nrow=nresamps,ncol=nsamps)
+
+# Now we can use a loop to create the resmaples using our couple lines of
+# code from before.
+
+# loop starts at one and goes to nresamps
+    
+    for (i in 1:nresamps) {
+    #generate random numbers for resample
+    ind=sample.int(length(dat),nsamps,replace=TRUE)
+    # index data with new indices
+    dat_RS=dat[ind]
+    # store in output matrix
+    resamps_out[i,]=dat_RS
+}
+    return(resamps_out)
+}
+
+```
+
+```{r}
+# Check it by making a single resample. For x1 the extra argument should be
+# 27 numel(x1) & should 47 (numel(x2)) for x2
+
+x1_RS=make_resamples2(x,1,length(x1))
+x2_RS=make_resamples2(x,1,length(x2))
+
+# now make say 500 resamples.
+
+x1_RS=make_resamples2(x,500,length(x1));
+x2_RS=make_resamples2(x,500,length(x2));
+
+# find the means and subtract them, take the mean on the data points.
+# Second dim.
+x1_RS_avg=apply(x1_RS,1,mean)
+x2_RS_avg=apply(x2_RS,1,mean)
+
+x_diff=x1_RS_avg-x2_RS_avg;
+
+# make a histogram to have a look at the distribution
+
+hist(x_diff,breaks=20)
+
+# now figure out our p val.
+
+# Assuming our alternate hypothesis is that mean of x2 > mean of x1
+
+print(length(which(x_diff >= x_diff_obs))/length(x_diff))
+
+#should be <0.05 for significance at alpha =0.05
+```
+

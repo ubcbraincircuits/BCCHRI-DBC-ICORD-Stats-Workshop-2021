@@ -1,0 +1,47 @@
+load the distribution
+```{r}
+#this is something non-gaussian that Jeff made up.  Meant to mimic the
+#Verizon data from the textbook chapter 18.  Then take a look at it using
+#hist.
+
+load("dat.rda")
+hist(dat,breaks=20)
+```
+
+## NB: R has some built in functions for doing resampling, bootstraping, etc
+And there are more online... I will mention a few of them as we go. We will also write some ourselves but I am not going to make any attempt to make this efficient or elegant. For learning purposes we are going to do things more or less by hand. With a computer.
+
+## make a resample.
+
+
+```{r}
+# what does that mean?
+
+# Draw samples with replacement (ie, they don't have to be unique) from the
+# data.
+
+# So we need a bunch of integers between 1 and 1550?  Simplest way to get
+# them is the matlab randi command
+
+# example for 10 values from 1 - 10:
+
+randi(10,1,10)
+
+# So the indices (store in a variable called ind) for our resample can be 
+# found like this:
+ind=randi(1550,1,1550);
+
+# or get matlab to get the size of the sample using numel
+ind=randi(numel(dat),1,numel(dat));
+
+# So to get our resample all we need to do is index dat with ind and assign
+# the result to a new variable.  Call it dat_RS.
+dat_RS=dat(ind);
+```
+
+take a look at our resample:
+Use hist!
+
+```{r}
+plot(pressure)
+```

@@ -251,10 +251,10 @@ resamps_out=matrix(nrow=nresamps,ncol=nsamps)
 x1_RS=make_resamples2(x,1,length(x1))
 x2_RS=make_resamples2(x,1,length(x2))
 
-# now make say 500 resamples.
+# now make say 5000 resamples.
 
-x1_RS=make_resamples2(x,500,length(x1));
-x2_RS=make_resamples2(x,500,length(x2));
+x1_RS=make_resamples2(x,5000,length(x1));
+x2_RS=make_resamples2(x,5000,length(x2));
 
 # find the means and subtract them, take the mean on the data points.
 # Second dim.

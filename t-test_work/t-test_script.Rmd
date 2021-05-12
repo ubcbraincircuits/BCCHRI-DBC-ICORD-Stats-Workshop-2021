@@ -1,30 +1,60 @@
-One Sample
+Sampling distributions. 
+The sampling distribution of a statistic represents all of the different different sample statistics we could get when we draw a random sample from a population. 
 ```{r}
-# First set the number of samples to draw from our sampling distribution
-n_samples=17
+# lets create a super basic normal distribution to represent a sampling distribution.
+# the mean of our distribution will be 10 and the standard deviation will be 2.5. 
+x <- seq(0, 20, by = .1)
+y <- dnorm(x, mean = 10, sd = 2.5)
 
-# first make some data points to use via the randn command
+# now we plot the distribution
+plot(x,y,type='l', main="Example of a sampling distribution", ylab='Probability',
+     xlab='Sample Statistic')
+
+# Now lets draw a single point from an identical sampling distribution using the rnorm function
+# If you are not familiar with rnorm, try running help(rnorm) and see what comes up
+help(rnorm)
+x = rnorm(1, mean=10, sd=2.5)
+print(x)
+
+#Now lets draw a bunch of points from an idential distribution and see what they look like using the hist function. 
+x = rnorm(10000, mean=10, sd=2.5)
+hist(x, breaks=30, xlab="Histogram of X")
+```
+This shape probably looks familiar to most of you. This is a normal distribution. It is going to come up a lot for reasons we are about to go over. 
+
+
+The t statistic and the t distribution. 
+```{r}
+# First set the sample size we are going to use when we draw our sample. 
+n=17
+
+# first make some data points to use via the rnorm command
 # plot it in a histogram to take a look.
-x=2.5*rnorm(n_samples)+10
+x=rnorm(n, mean=10, sd=2.5)
 
 hist(x)
 
-# Let's say the test we are trying to accomplish it to see if the data is
-# consistent with a population mean of 10.  This will be our H0: mu=10.
-
-# What's our Ha?  
-  
-# Let's say the alternative is that mu > 10, This means we will be looking
-# for our test statistic in a rejection region which is out to the right
-# side of the distribution, so we will need to set the greater than option.
-
-#Quickly jump over to chapter 18-13.  Sampling distribution which is true
-#under H0.
-
 #What's our t distribution look like?
-tdistr=dt(seq(-5,5,by=.1),length(x))
+tdistr=dt(seq(-5,5,by=.1),n)
 plot(seq(-5,5,by=.1),tdistr,type="l",main="t distribution",xlab="",ylab="")
 
+# Let's add a not so random line to represent a theoretical sample mean. 
+plot(seq(-5,5,by=.1),tdistr,type="l",main="t distribution",xlab="",ylab="")+abline(v=1.75, col='red')
+```
+What I just did is sort of like a manual version of conducting a t-test. R has a whole bunch of built in machinery that makes doing t-tests much simpler. Let's actually do a t-test now. 
+
+Let's say the test we are trying to accomplish it to see if the data is
+consistent with a population mean of 10.  This will be our H0: mu=10.
+
+What's our Ha?  
+  
+Let's say the alternative is that mu > 10, This means we will be looking
+for our test statistic in a rejection region which is out to the right
+side of the distribution, so we will need to set the greater than option.
+
+One Sample T-test. 
+
+```{r}
 # what's our t value and where is it on the distribution?  What do you predict for the result of
 # the test?
 
@@ -35,22 +65,22 @@ obs_t=(mean(x)-10)/(sd(x)/sqrt(length(x)))
 # do the t.test:
 t.test(x,mu=10,alternative="g")
 
-# Their are a lot of outputs, but for our purposes we want to focus on 
+# There are a lot of outputs, but for our purposes we want to focus on 
 # the p-value. 
-  
-# just for funsies:  How often do we make a type I error?  It's
-# easy to estimate for type I here.  We know mu.  Above. It's 10.
+```
+just for funsies:  How often do we make a type I error?  It's
+easy to estimate for type I here.  We know mu.  Above. It's 10.
 
-# So what's a type I error again?  H0 rejected when it's true.
-# In our case H0 is true.
-# let's generate a sample and do the test lot's of times to see how often
-# we reject H0.
-
+So what's a type I error again?  H0 rejected when it's true.
+In our case H0 is true.
+let's generate a sample and do the test lot's of times to see how often
+we reject H0.
+```{r}
 N_iter=20000
 h_out=0
 alpha=0.05
 for (i in 1:N_iter){
-  x=2.5*rnorm(n_samples)+10
+  x=rnorm(n, mean=10, sd=2.5)
   p=t.test(x,mu=10,alternative="g")[["p.value"]]
   if (p < alpha){
   h_out=h_out+1
@@ -70,8 +100,8 @@ Two sample T-test.
 ```{r}
 
 # first make 2 large samples
-x=2.5*rnorm(170)+10;
-y=2.5*rnorm(340)+11;
+x=rnorm(170, mean=10, sd=2.5)
+y=rnorm(340, mean=11, sd=2.5)
 
 # Look at them.
 
@@ -81,13 +111,15 @@ hist(y)
 # very cute, but let's reduce the number of data points to make this a
 # little more messy, I mean realistic.
 
-x=2.5*rnorm(n_samples)+10;
-y=2.5*rnorm(34)+11;
+x=rnorm(n, mean=10, sd= 2.5)
+y=rnorm(34, mean=10, sd=2.5)
 
 # Look at them.
 
 hist(x)
 hist(y)
+```
+```{r}
 
 # Here I made the variances equal.  In practice if we are using a two
 # sample t test and allowing ourselves to assume equal variances then we
@@ -133,12 +165,12 @@ t.test(x,y,var.equal=FALSE, alternative="l")
 
 # back to slides for a moment
 ```
-Paired test
+Paired T-test
 ```{r}
 # ok we need two samples again.
 
-x=2.5*rnorm(n_samples)+10;
-y=2.5*rnorm(n_samples)+11;
+x=rnorm(n, mean=10, sd=2.5)
+y=rnorm(n, mean=11, sd=2.5)
 
 # same number of data points this time.
 
@@ -161,7 +193,7 @@ plot(seq(-5,5,by=.1),tdistr,type="l",main="t distribution, paired test example",
 # What's our Ha?  Let's say again that mu1<mu2, so we need to look at a
 # rejection region in the left tail of the distribution.
 
-# ok do the test.  it's ttest again
+# ok do the test.  it's t.test again but this time we are going to specify that they are paired. 
 
 t.test(x,y,paired=TRUE, alternative="l")
 ```

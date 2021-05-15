@@ -1,9 +1,9 @@
 load the distribution
 
 ```{r}
-#this is something non-gaussian that Jeff made up.  Meant to mimic non-normal dat. Let's take a look at it using hist.
-
 load("dat.rda")
+#this is something non-gaussian that I made up.  Meant to mimic a non-normal data set with 1550 data 
+#points. Let's take a look at it using hist.
 hist(dat,breaks=30)
 ```
 
@@ -11,8 +11,6 @@ hist(dat,breaks=30)
 And there are more online... I will mention a few of them as we go. We will also write some ourselves but I am not going to make any attempt to make this efficient or elegant. For learning purposes we are going to do things more or less by hand. With a computer.
 
 ## make a resample.
-
-
 ```{r}
 # what does that mean?
 
@@ -20,15 +18,17 @@ And there are more online... I will mention a few of them as we go. We will also
 # data.
 
 # So we need a bunch of integers between 1 and 1550?  Simplest way to get
-# them is the matlab randi command
+# them is the R sample.int command with replacement specified. 
 
 # example for 10 values from 1 - 10:
 
-sample.int(10,10,replace=TRUE)
+print(sample.int(10,10,replace=TRUE))
+
+# notice how some numbers come up twice while other never come up? that is replacement. 
 
 # So the indices (store in a variable called ind) for our resample can be 
 # found like this:
-ind=sample.int(1550,1550,replace=TRUE)
+ind=sample.int(1550,1550,replace=TRUE) ##!!!### Please remeber to mention what an index is real quick. 
 
 # or get R to get the size of the sample using numel
 ind=sample.int(length(dat),length(dat),replace=TRUE)
@@ -47,7 +47,7 @@ hist(dat_RS,breaks=30)
 #unless you get a peculiar resample it should look pretty much like the
 #original one.
 ```
-##So now we should probably write a function to do the resampling for us
+##So now I am going to write you a function to do the resampling for you many times over. 
 
 ```{r}
 # Use 2 inputs. 1. the data, can be called dat 2. the number of resamples, nresamps.
@@ -75,6 +75,7 @@ for (i in 1:nresamps) {
     return(resamps_out)
 }
 ```
+# This function returns a 2 dimensional matrix of resamples. What is a 2 dimensional matrix? For our purposes it is a table. Just a table. Sounds fancy. Really boring. 
 
 ```{r}
 # Write a command using our function to do 10 resamples.
@@ -90,14 +91,14 @@ for (i in 1:10) {
 }
 # Pretty similiar??  Should be...
 ```
-ok, now that we can generate lots of resamples let's look at the mean and distribution of each.
+ok, now that we can generate lots of resamples let's look at the distribution of different means in our resamples.
+#!!!!# make sure to be clear about the fact that each of these resamples (refer to the histograms above) are going to have their means calculated. 
 ```{r}
 # let's get 2000 resamples
 
 dat_RS=make_resamples(dat,2000)
 
-# easy to find the mean of the resamples.  Use mean and specify the second
-# dimension.  Store the result in avg_RS
+# easy to find the mean of the resamples. we are going to use the apply function to calculate the mean for every resample in our matrix. 
 
 avg_RS=apply(dat_RS,1,mean)
 
@@ -111,14 +112,15 @@ hist(avg_RS,breaks=30)
 mean(dat)
 ```
 Where do you expect this to fall on the histogram?  What shape should this
-distribution have?
+distribution have? #!!!!# the hell does this mean? 
 
 What is this distribution?
 
-It's the bootstrap distriubtion of the sample mean.
+It's the bootstrap distriubtion of the sample mean. It represents an estimation of the sampling 
+distribution. 
 
-Let's try it again, this time using R's most popular bootstrapping package!
-you will likely need to install the package by plugging install.packages("boot")
+Let's try it again, this time using R's most popular bootstrapping package which is creatively named 
+boot. 
 ```{r}
 #Check the boot package doc using help("boot") There is a lot of information in this help file, but you should focus on the first 3 inputs. Use the function to find the means of 2000
 #resamples. store the result in a matrix called m for mean.
@@ -173,42 +175,9 @@ bca_ci=boot.ci(output, type="bca")
 print(bca_ci)
 # It adjusts to correct for bias and skewness in the bootstrap distribution.
 ```
+Before we get into Permutation testing, let's modify our make_resamples so that we can get resamples with a specific number of data points.  Start by saving your function with a new name make_samples2.  Don't forget to rename the function.  Add an extra input argument called nsamp which will be the number of data points in the resample.  
+#Don't forget to update your comments.
 
-Permutation testing.
-```{r}
-#Let's make a couple of normal samples.  Call them x1 and x2.
-# give x1 a mean of 1 and std of 2 and 27 data points
-# give x2 a mean of 2 and std of 3 and 47 data points
-# recall the R function rnorm gives random numbers taken from a
-# normal distribution.
-
-x1=2*rnorm(27)+1
-x2=3*rnorm(47)+2
-
-# take a look at each of them using hist.
-
-hist(x1)
-hist(x2)
-
-# and we want to look at the difference of the means? So calculate the
-# observed difference from the samples.  Store in x_diff_obs.
-
-x_diff_obs=mean(x2)-mean(x1)
-
-# ok our null hypothesis is that there is no difference between the means
-# of the two samples.  So we can build a distribution by resampling as if
-# this were the case.  Call it the permutation distribution to distinguish 
-# it from the bootstrap.  We have a total of 27 + 47=74 observtions.  Let's put
-# them all together in a big vector by concatenation, call it x:
-
-x=c(x1, x2)
-
-```
-now let's modify our make_resamples so that we can get resamples with a
-specific number of data points.  Start by saving your function with a new
-name make_samples2.  Don't forget to rename the function.  Add an extra
-input argument called nsamp which will be the number of data points in
-the resample.  Don't forget to update your comments.
 ```{r}
 make_resamples2 = function(dat,nresamps,nsamps) {
 #make_resamples This function resamples an input data set a specified
@@ -233,7 +202,7 @@ resamps_out=matrix(nrow=nresamps,ncol=nsamps)
     
     for (i in 1:nresamps) {
     #generate random numbers for resample
-    ind=sample.int(length(dat),nsamps,replace=TRUE)
+    ind=sample.int(length(dat),nsamps,replace=TRUE) #!!!# Wait, are we doing replacement here? 
     # index data with new indices
     dat_RS=dat[ind]
     # store in output matrix
@@ -244,12 +213,45 @@ resamps_out=matrix(nrow=nresamps,ncol=nsamps)
 
 ```
 
+Permutation testing.
 ```{r}
-# Check it by making a single resample. For x1 the extra argument should be
-# 27 numel(x1) & should 47 (numel(x2)) for x2
+#Let's make a couple of normal samples.  Call them x1 and x2.
+# give x1 a mean of 1 and std of 2 and 27 data points
+# give x2 a mean of 2 and std of 3 and 47 data points
+# recall the R function rnorm gives random numbers taken from a
+# normal distribution.
 
-x1_RS=make_resamples2(x,1,length(x1))
-x2_RS=make_resamples2(x,1,length(x2))
+x1=2*rnorm(27)+1 #!!!# just set the mean and sd. 
+x2=3*rnorm(47)+2
+
+# take a look at each of them using hist.
+
+hist(x1)
+hist(x2)
+
+```
+
+
+
+```{r}
+# and we want to look at the difference of the means? So calculate the
+# observed difference from the samples.  Store in x_diff_obs.
+
+x_diff_obs=mean(x2)-mean(x1)
+
+# ok our null hypothesis is that there is no difference between the means
+# of the two samples.  So we can build a distribution by resampling as if
+# this were the case.  Call it the permutation distribution to distinguish 
+# it from the bootstrap.  We have a total of 27 + 47=74 observtions.  Let's put
+# them all together in a big vector by concatenation, call it x:
+
+x=c(x1, x2)
+
+# Check it by making a single resample. For x1 the extra argument should be
+# 27 numel(x1) & it should be 47 (numel(x2)) for x2
+
+x1_RS=make_resamples2(x1,1,length(x1))
+x2_RS=make_resamples2(x2,1,length(x2))
 
 # now make say 5000 resamples.
 
@@ -258,8 +260,8 @@ x2_RS=make_resamples2(x,5000,length(x2));
 
 # find the means and subtract them, take the mean on the data points.
 # Second dim.
-x1_RS_avg=apply(x1_RS,1,mean)
-x2_RS_avg=apply(x2_RS,1,mean)
+x1_RS_avg=apply(x_RS,1,mean)
+x2_RS_avg=apply(x_RS,1,mean)
 
 x_diff=x1_RS_avg-x2_RS_avg;
 

@@ -1,3 +1,4 @@
+#!!!!!# For this script I need to create a bunch of blanks to let people fill stuff in. 
 Sampling distributions. 
 The sampling distribution of a statistic represents all of the different different sample statistics we could get when we draw a random sample from a population. 
 ```{r}
@@ -12,13 +13,10 @@ plot(x,y,type='l', main="Example of a sampling distribution", ylab='Probability'
 
 # Now lets draw a single point from an identical sampling distribution using the rnorm function
 # If you are not familiar with rnorm, try running help(rnorm) and see what comes up
-help(rnorm)
-x = rnorm(1, mean=10, sd=2.5)
-print(x)
 
-#Now lets draw a bunch of points from an idential distribution and see what they look like using the hist function. 
-x = rnorm(10000, mean=10, sd=2.5)
-hist(x, breaks=30, xlab="Histogram of X")
+#Now lets draw a bunch of points from an idential distribution and see what they look like using the 
+#hist() function. Try help(hist) if stuck.
+
 ```
 This shape probably looks familiar to most of you. This is a normal distribution. It is going to come up a lot for reasons we are about to go over. 
 
@@ -32,7 +30,6 @@ plot(seq(-5,5,by=.1),tdistr,type="l",main="t distribution",xlab="t",ylab="Poroba
 # Let's add a not so random line to represent a theoretical t statistic. 
 plot(seq(-5,5,by=.1),tdistr,type="l",main="t distribution",xlab="t",ylab="Probability Density")+
   abline(v=1.75, col='red')
-##!!!!## Replace the abline with polygon. 
 ```
 What I just did is sort of like a manual version of conducting a t-test. R has a whole bunch of built in machinery that makes doing t-tests much simpler. Let's actually do a t-test now. 
 
@@ -50,26 +47,23 @@ One Sample T-test.
 ```{r}
 # First set the sample size we are going to use when we draw our sample. Let's do 20 replicates and call 
 # the variable n
-n=20
 
-# create a sample to use via the rnorm command. Give it a mean of 10 and a standard deviation of 2.5
-# plot it in a histogram to take a look.
-x=rnorm(n, mean=10, sd=2.5)
-
-hist(x)
+# create a sample to use via the rnorm command and call it x. Give it a mean of 10 and a standard  
+# deviation of 2.5.  plot it in a histogram and take a look. 
+x=
 
 #Quickly remake the t distribution. 
-tdistr=dt(seq(-5,5,by=.1),n-1)
+tdistr=dt(seq(-5,5,by=.1),17)
 plot(seq(-5,5,by=.1),tdistr,type="l",main="t distribution",xlab="t",ylab="Porobability Density")
 
 # what's our t value and where is it on the distribution?  What do you predict for the result of
 # the test?
+
 obs_t=(mean(x)-10)/(sd(x)/sqrt(length(x)))
 
 # R's t test function is called t.test
 
 # do the t.test:
-t.test(x,mu=10,alternative="g")
 
 # There are a lot of outputs, but for our purposes we want to focus on 
 # the p-value. 
@@ -103,23 +97,24 @@ h_out/N_iter
 # Ok that's all for now.  Go back to slides.
 ```
 Two sample T-test.
+
+Rather than comparing one sample to a known mean, we are going to compare two samples from slightly different populations to each other. 
 ```{r}
 
 # first make 2 large samples, lets say 200 and 400 samples each. 
 # The mean of x will be 10 and the mean of y will be 11. 
-x=rnorm(170, mean=10, sd=2.5)
-y=rnorm(340, mean=11, sd=2.5)
+x=
+y=
 
 # Look at them using hist().
 
-hist(x)
-hist(y)
-
+```
+```{r}
 # very cute, but let's reduce the number of data points to make this a
-# little more messy, I mean realistic. Lets do sample sizes of 20 and 40.
+# little more messy, I mean realistic. Lets do sample sizes of 20 and 40. 
 
-x=rnorm(20, mean=10, sd= 2.5)
-y=rnorm(40, mean=11, sd=2.5)
+x=
+y=
 
 # Look at them.
 
@@ -155,35 +150,32 @@ obs_t=(mean(x)-mean(y))/sqrt((sp^2)/length(x)+(sp^2)/length(y))
 tdistr=dt(seq(-5,5,by=.1),length(x)+length(y)-2)
 plot(seq(-5,5,by=.1),tdistr,type="l",main="t distribution, 2 samp test example",xlab="",ylab="")
 
-# Ok now use the matlab test to confirm our suspicions.
-
-t.test(x,y,var.equal=TRUE, alternative="l")
+# Ok now use the t.test to confirm our suspicions. look through the help file and figure out how to set 
+# the variances as equal
 
 # Note the test can also be done without assuming the variances are equal
 
 # In this case the t stat is a bit easier to calculate, just as we had in
 # the presentation.  No pooled sd.  However the dof is approxiamte and is
 # estimated from the data using a formula you can look up.
-
-t.test(x,y,var.equal=FALSE, alternative="l")
+# try running t.test again without specifying that the variances are equal. 
 
 # Due to this approximation the test stat is only approximately t
 # distributed so you only get approximately alpha significance.
 
-# back to slides for a moment
 ```
 Paired T-test
+
+We are going to look at two samples again, but now we are going to imagine that we are sampling the same individuals from the same population after some kind of treatment. 
 ```{r}
 # ok we need two samples again.
 
-x=rnorm(n, mean=10, sd=2.5)
-y=rnorm(n, mean=11, sd=2.5)
+x=
+y=
 
 # same number of data points this time.
 
 # ok, so what are our diffs?
-  
-the_diffs=x-y
 
 # What's our H0.  Let's say it is that the means are equal again.
 
@@ -194,13 +186,9 @@ obs_t=mean(the_diffs)/(sd(the_diffs)/sqrt(length(the_diffs)))
 # what does our t distribution look like? Where is our observed t value?
 # What's the likely outcome of our test?
 
-tdistr=dt(seq(-5,5,by=.1),length(the_diffs)-1)
-plot(seq(-5,5,by=.1),tdistr,type="l",main="t distribution, paired test example",xlab="",ylab="")
-
 # What's our Ha?  Let's say that it is mu1<mu2, so we need to look at a
 # rejection region in the left tail of the distribution.
 
 # ok do the test.  it's t.test again but this time we are going to specify that they are paired. 
 
-t.test(x,y,paired=TRUE, alternative="l")
 ```

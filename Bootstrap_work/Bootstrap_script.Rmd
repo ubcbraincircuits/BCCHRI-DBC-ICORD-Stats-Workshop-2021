@@ -109,7 +109,7 @@ avg_RS=apply(dat_RS,1,mean)
 # So now we have the mean for each resample.  plot the distribution of
 # that using hist again.
 
-hist(avg_RS,breaks=30)
+hist(avg_RS,breaks=30,main="Bootstrap distribution")
 
 # Btw, what was our actual sample mean?
 
@@ -184,6 +184,7 @@ print(length(which(m>per_ci$percent[,4] & m < per_ci$percent[,5]))/length(m))
 # Nice.  Willing to except a little descrepancy here since the bootci is
 # calculating a new bootstrap distribution compared to the one we used for
 # m.
+#!!!# This is kind of weird, shouldn't we just use the same bootstrap somehow? 
 
 # or perhaps use the bias corrected accelerated confidence interval?
 bca_ci=boot.ci(output, type="bca")
@@ -227,6 +228,7 @@ resamps_out=matrix(nrow=nresamps,ncol=nsamps)
 ```
 
 Permutation testing.
+
 ```{r}
 #Let's make a couple of normal samples.  Call them x1 and x2.
 # give x1 a mean of 1 and std of 2 and 27 data points

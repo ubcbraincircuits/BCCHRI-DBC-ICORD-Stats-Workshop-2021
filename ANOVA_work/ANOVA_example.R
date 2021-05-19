@@ -38,7 +38,6 @@ a
 sum(a$`Sum Sq`)
 
 #intalling Imertest
-install.packages("lmerTest")
 library(lmerTest)
 
 #creating an object for random block 

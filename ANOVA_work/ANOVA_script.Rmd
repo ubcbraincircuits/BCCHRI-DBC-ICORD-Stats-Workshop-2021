@@ -1,0 +1,41 @@
+Generate some data
+Let's generate some data using three different calls to the rnorm function to represent samples from three different populations
+
+Hmmmm, I might want to just build the dataframe for them and have them download it again. I am not sure it is a valid use of their time to work with all of this cbind and stack garbage, 
+"The ANOVA function is a little bit different from the other functions and it works best when your data is organized a certain way. Luckily, this is the way your data will usually be organized after collection anyway." 
+```{r}
+#Use a sample size of 20 for all of the samples. Set the mean of the first two samples as 2 and set the 
+#mean of the last sample as 4. Use a standard deviation of 1.5 for all samples. 
+x1=rnorm(20, mean=2, sd=1.5)
+x2=rnorm(20, mean=2, sd=1.5)
+x3=rnorm(20, mean=4, sd=1.5)
+
+# Lets look at the mean and spread of each of our samples using the boxplot() function. 
+boxplot(x1,x2,x3)
+
+# Now we need to bind the example data into a dataframe. 
+data= data.frame(cbind(x1,x2,x3))
+data= stack(data)
+data["group"]=data["ind"]
+data = subset(data, select=-c(ind)) #!!!!# This is way too many steps. 
+
+
+```
+
+#!!!!# hmmm, I may need to consider stuffing this stuff together into a dataframe. 
+
+ANOVA
+```{r}
+#I think I like this one at a time sort of method. starting with lm will basically explain to people that 
+#ANOVAA is actually a type of linear regression, which is an important sidenote. 
+Av_object <- lm(values~group,data=data) #!!!# The whole data=data thing might be a good reason to not call it data. 
+
+anova(Av_object)
+
+#and then perform a Tukey Test
+TukeyHSD(aov(Av_object), conf.level=0.95)
+```
+
+```{r}
+?aov()
+```

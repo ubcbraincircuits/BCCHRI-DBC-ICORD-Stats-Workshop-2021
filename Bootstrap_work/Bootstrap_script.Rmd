@@ -231,18 +231,18 @@ Permutation testing.
 
 ```{r}
 #Let's make a couple of normal samples.  Call them x1 and x2.
-# give x1 a mean of 1 and std of 2 and 27 data points
-# give x2 a mean of 2 and std of 3 and 47 data points
+# give x1 a mean of 1 and a std of 2 and 27 data points
+# give x2 a mean of 2 and a std of 3 and 47 data points
 # recall the R function rnorm gives random numbers taken from a
 # normal distribution.
 
-x1=rnorm(27, mean=1, sd=2)
+x1=rnorm(27, mean=1, sd=2) #!!!!# Should'nt these sds be the same or it violates the assumptions of the permutation test? 
 x2=rnorm(47, mean=2, sd=3)
 
 # take a look at each of them using hist.
 
-hist(x1)
-hist(x2)
+hist(x1, main="Sample 1",xlab="")
+hist(x2, main="Sample 2",xlab="")
 
 ```
 
@@ -263,7 +263,7 @@ x_diff_obs=mean(x2)-mean(x1)
 x=c(x1, x2) # !!!# I may have to provide an example of how to concatonate. 
 
 # Check it by making a single resample. For x1 the extra argument should be
-# 27 numel(x1) & it should be 47 (numel(x2)) for x2
+# 27 (length(x1)) & it should be 47 (length(x2)) for x2
 
 x1_RS=make_resamples2(x,1,length(x1)) #!!!!# I need to make sure that I explain this part a lot, This is the most confusing part (in my opinion)
 x2_RS=make_resamples2(x,1,length(x2))
@@ -274,15 +274,15 @@ x1_RS=make_resamples2(x,5000,length(x1));
 x2_RS=make_resamples2(x,5000,length(x2));
 
 # find the means and subtract them, take the mean on the data points.
-# Second dim.
-x1_RS_avg=apply(x_RS,1,mean)
-x2_RS_avg=apply(x_RS,1,mean)
+# Second dimension.
+x1_RS_avg=apply(x1_RS,1,mean)
+x2_RS_avg=apply(x2_RS,1,mean)
 
 x_diff=x1_RS_avg-x2_RS_avg;
 
 # make a histogram to have a look at the distribution
 
-hist(x_diff,breaks=20)
+hist(x_diff,breaks=30,main = "Permutation Distribution")
 
 # now figure out our p val.
 
@@ -291,6 +291,12 @@ hist(x_diff,breaks=20)
 print(length(which(x_diff >= x_diff_obs))/length(x_diff))
 
 #should be <0.05 for significance at alpha =0.05
-# No function to perform a permutation test? 
+#!!!!! # No function to perform a permutation test? 
 ```
-
+```{r}
+hist(x, main="Combined Sample",xlab="")
+x1_RS=make_resamples2(x,1,length(x1)) #!!!!# I need to make sure that I explain this part a lot, This is the most confusing part (in my opinion)
+x2_RS=make_resamples2(x,1,length(x2))
+hist(x1_RS, main="Resample 1",xlab="")
+hist(x2_RS, main="Resample 2",xlab="")
+```

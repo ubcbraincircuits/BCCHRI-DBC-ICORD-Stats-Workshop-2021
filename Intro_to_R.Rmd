@@ -1,0 +1,13 @@
+Things I wish to include: 
+An explanation of the basic layout. 
+An explanation of the basic commands (things like how to run a line of code)
+An explanation of the R markdown format
+An explanation of how to set a variable. 
+An explanation of using base functions
+An example of loading a package and using a package function. 
+An example of how to use the help() function. 
+An example For loop. 
+An example plot. (show off severeal of the most basic plots and then show how you can use the 
+par function to make subplots. )
+A VERY basic example of working with dataframes (stuff like what does dataframe$column_name do.)
+A final not on the fact that there is often more than 1 way to do things in R. 

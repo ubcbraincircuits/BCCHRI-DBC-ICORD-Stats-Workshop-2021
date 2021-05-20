@@ -26,15 +26,16 @@ This shape probably looks familiar to most of you. This is a normal distribution
 The t statistic and the t distribution. 
 ```{r}
 #What does our t distribution look like?
-tdistr=dt(seq(-5,5,by=.1),17)
-plot(seq(-5,5,by=.1),tdistr,type="l",main="t distribution",xlab="t",ylab="Porobability Density")
+x=seq(-5,5,by=0.001)
+tdistr=dt(x,17)
+plot(x,tdistr,type="l",main="t distribution",xlab="t",ylab="Porobability Density")
 
 # Let's add a not so random line to represent a theoretical t statistic. 
-plot(seq(-5,5,by=.1),tdistr,type="l",main="t distribution",xlab="t",ylab="Probability Density")+
-  abline(v=1.75, col='red')
+plot(seq(-5,5,by=.001),tdistr,type="l",main="t distribution",xlab="t",ylab="Probability Density")+
+polygon(c(x[x>=1.75], max(x), 1.75), c(tdistr[x>=1.75], 0, 0), col="red")
 ##!!!!## Replace the abline with polygon. 
 ```
-What I just did is sort of like a manual version of conducting a t-test. R has a whole bunch of built in machinery that makes doing t-tests much simpler. Let's actually do a t-test now. 
+What we just did is sort of like a manual version of conducting a t-test. R has a whole bunch of built in machinery that makes doing t-tests much simpler. Let's actually do a t-test now. 
 
 Let's say the test we are trying to accomplish it to see if the data is
 consistent with a population mean of 10.  This will be our H0: mu=10.

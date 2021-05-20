@@ -216,7 +216,7 @@ resamps_out=matrix(nrow=nresamps,ncol=nsamps)
     
     for (i in 1:nresamps) {
     #generate random numbers for resample
-    ind=sample.int(length(dat),nsamps,replace=TRUE) #!!!# Wait, are we doing replacement here? 
+    ind=sample.int(length(dat),nsamps,replace=FALSE) #!!!# Wait, are we doing replacement here? 
     # index data with new indices
     dat_RS=dat[ind]
     # store in output matrix
@@ -236,8 +236,8 @@ Permutation testing.
 # recall the R function rnorm gives random numbers taken from a
 # normal distribution.
 
-x1=rnorm(27, mean=1, sd=2) #!!!!# Should'nt these sds be the same or it violates the assumptions of the permutation test? 
-x2=rnorm(47, mean=2, sd=3)
+x1=rnorm(27, mean=1, sd=2) 
+x2=rnorm(47, mean=2, sd=2)
 
 # take a look at each of them using hist.
 

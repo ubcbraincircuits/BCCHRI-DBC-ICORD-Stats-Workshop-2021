@@ -4,7 +4,6 @@ load the distribution
 load("dat.rda")
 #this is something non-gaussian that I made up.  Meant to mimic a non-normal sample data set with 1550  
 #data points. Let's take a look at it using hist.
-hist(dat,breaks=30)
 ```
 
 ## NB: R has some built in functions for doing resampling, bootstraping, etc
@@ -41,9 +40,8 @@ ind=sample.int(length(dat),length(dat),replace=TRUE)
 # the result to a new variable.  Call it dat_RS.
 dat_RS=dat[ind]
 
-# look at dat_RS. 
-# now take a look at our resample using hist
-hist(dat_RS,breaks=30)
+# look at dat_RS
+#take a look at our resample Using hist()
 
 #unless you get a peculiar resample it should look pretty much like the
 #original one.
@@ -79,25 +77,20 @@ for (i in 1:nresamps) {
 # This function returns a 2 dimensional matrix of resamples. What is a 2 dimensional matrix? For our purposes it is a table. Just a table. Sounds fancy. Really boring. 
 
 ```{r}
-# Write a command using our function to do 10 resamples.
+# use our function to do 10 resamples.
 
-dat_RS=make_resamples(dat,10)
+dat_RS=
 
 # take a look at the resamples to see how their histograms look, do a loop
-# and a subplot.
 
-par(mfrow=c(2,5))
-for (i in 1:10) {
-    hist(dat_RS[i,],breaks=20,main="",xlab="",ylab="")
-}
+# and a subplot.
 # Pretty similiar??  Should be...
 ```
 ok, now that we can generate lots of resamples let's look at the distribution of different means in our resamples.
-#!!!!# make sure to be clear about the fact that each of these resamples (refer to the histograms above) are going to have their means calculated. 
 ```{r}
 # let's get 2000 resamples
 
-dat_RS=make_resamples(dat,2000)
+dat_RS=
 
 # easy to find the mean of the resamples. we are going to use the apply function to calculate the mean for every resample in our matrix. 
 
@@ -106,11 +99,8 @@ avg_RS=apply(dat_RS,1,mean)
 # So now we have the mean for each resample.  plot the distribution of
 # that using hist again.
 
-hist(avg_RS,breaks=30,main="Bootstrap distribution")
-
 # Btw, what was our actual sample mean?
 
-mean(dat)
 # it is the same of the mean of this histogram isn't it? 
 ```
 Where do you expect this to fall on the histogram?  What shape should this
@@ -126,7 +116,7 @@ boot.
 ```{r}
 #Check the boot package doc using help("boot") There is a lot of information in this help file, but you 
 #should focus on the first 3 inputs. Use the function to find the means of 2000
-#resamples. store the result in a matrix called m for mean.
+#resamples.
 
 library(boot)
 
@@ -136,9 +126,12 @@ samplemean <- function(data, i) {
   return(mean(d))
 }
 
+# Run the boot function. 
 output = boot(data=dat,statistic=samplemean,R=2000)
+
 # Save the "t" value of the output using output$t in a variable named m
 m = output$t
+# This m is our bootstrap distribution.  
 ```
 Let's head back to the slides for now. 
 
@@ -150,9 +143,9 @@ How about the standard error?
 ```{r}
 # using our bootstrap distribution, call it avg_RS_se
 # remeber, the standard deviation function in R is sd()
-avg_RS_se=sd(avg_RS)
+
 # Using the bootstrap distribution from boot, call it m_se. 
-m_se=sd(m)
+
 ```
 
 And confidence intervals?
@@ -163,18 +156,13 @@ And confidence intervals?
 
 # traditional t-confidence interval is stat +/- t*SE_stat 
 # for alpha=0.05;
-alpha=0.05
-tcrit = qt(1-alpha/2,1550);
-mean(m)-tcrit*sd(m)
-mean(m)+tcrit*sd(m)
+alpha =
+tcrit =
 
 # Let's also look at the percentile method. For this we are going to use the boot.ci part of the boot 
 # package. run help(boot.ci) and focus on the first 3 arguments. 
-help(boot.ci)
 
 # create a percentile bootstrap confidence interval. 
-per_ci=boot.ci(output, type="perc")
-print(per_ci)
 
 # Does it make sense?  Figure out how many elements in our bootstrap
 # distribution fall within these limits.  Use numel and find perhaps.
@@ -217,7 +205,7 @@ resamps_out=matrix(nrow=nresamps,ncol=nsamps)
     
     for (i in 1:nresamps) {
     #generate random numbers for resample
-    ind=sample.int(length(dat),nsamps,replace=FALSE)
+    ind=sample.int(length(dat),nsamps,replace=FALSE) #!!!# Wait, are we doing replacement here? 
     # index data with new indices
     dat_RS=dat[ind]
     # store in output matrix
@@ -237,13 +225,10 @@ Permutation testing.
 # recall the R function rnorm gives random numbers taken from a
 # normal distribution.
 
-x1=rnorm(27, mean=1, sd=2) 
-x2=rnorm(47, mean=2, sd=2)
+x1=
+x2=
 
 # take a look at each of them using hist.
-
-hist(x1, main="Sample 1",xlab="")
-hist(x2, main="Sample 2",xlab="")
 
 ```
 
@@ -253,37 +238,36 @@ hist(x2, main="Sample 2",xlab="")
 # and we want to look at the difference of the means? So calculate the
 # observed difference from the samples.  Store in x_diff_obs.
 
-x_diff_obs=mean(x2)-mean(x1)
+x_diff_obs=
 
 # ok our null hypothesis is that there is no difference between the means
 # of the two samples.  So we can build a distribution by resampling as if
 # this were the case.  Call it the permutation distribution to distinguish 
 # it from the bootstrap.  We have a total of 27 + 47=74 observtions.  Let's put
 # them all together in a big vector by concatenation, call it x:
+# You can concatonate in R using the c() function. 
 
-x=c(x1, x2) # !!!# I may have to provide an example of how to concatonate. 
+x=c(x1, x2)
 
 # Check it by making a single resample. For x1 the extra argument should be
 # 27 (length(x1)) & it should be 47 (length(x2)) for x2
 
-x1_RS=make_resamples2(x,1,length(x1)) 
-x2_RS=make_resamples2(x,1,length(x2))
+x1_RS=
+x2_RS=
 
 # now make say 5000 resamples.
 
-x1_RS=make_resamples2(x,5000,length(x1));
-x2_RS=make_resamples2(x,5000,length(x2));
+x1_RS=
+x2_RS=
 
 # find the means and subtract them, take the mean on the data points.
 # Second dimension.
-x1_RS_avg=apply(x1_RS,1,mean)
-x2_RS_avg=apply(x2_RS,1,mean)
+x1_RS_avg=
+x2_RS_avg=
 
-x_diff=x1_RS_avg-x2_RS_avg;
+x_diff=
 
 # make a histogram to have a look at the distribution
-
-hist(x_diff,breaks=30,main = "Permutation Distribution")
 
 # now figure out our p val.
 

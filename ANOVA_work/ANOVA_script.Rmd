@@ -13,15 +13,14 @@ boxplot(x1,x2,x3)
 
 The ANOVA function is a little bit different from the other functions in that it works best when your data is organized a certain way. Luckily, this is the way your data will usually be organized after collection anyway.
 ```{r}
-# lets bind the example data into a dataframe using cbind(). 
+# lets bind the example data together using cbind() and then put it into a dataframe with data.frame(). 
+# let's call our new dataframe df. 
 data = data.frame(cbind(x1,x2,x3))
 
-#Then we are going to reorganize it with stack. 
+# Then we are going to reorganize it with stack(). 
 data = stack(data)
 
-#And rename the "ind" column. 
-data["group"]=data["ind"]
-data = subset(data, select=-c(ind))
+# now are data is all set for ANOVA.
 ```
 
 ANOVA
@@ -32,7 +31,7 @@ we are going to learn ANOVA in a kind of backwards way. We are going to start by
 # Why are we using linear regression for ANOVA? because ANOVA is actually a special application of Linear
 # Regression! We may explore this more in future workshops, but for now do not worry about it. 
 
-#run help(lm)
+#run help(lm). Focus on the first two arguments. 
 help(lm)
 
 # wait, what is a formula class object? 
@@ -44,9 +43,9 @@ help(lm)
 # for more details, look up ?formula 
 
 # ok, now we can actually use lm() by specifying the formula and data arguments. run lm and save the 
-# output in a variable
+# output in a variable named Av_object
 # Hint: what are our response and explanatory variables? 
-Av_object <- lm(values~group,data=data) 
+Av_object <- lm(values~ind,data=data) 
 
 # Now we are ready to actually run the ANOVA test using the anova() function. 
 anova(Av_object)
@@ -56,12 +55,15 @@ Let's hop over to the slides so we can look at this output more closely.
 The most important output from our table is the F-statistic. The F-statsitc measures the amount of variation in our data that came from differences between our treatment groups versus the amount of variation that came from differences within our treatment groups. From this F statistic we can create an f distribution that allows us to calculate P-values. 
 ```{r}
 # lets create the F distribution using the df function.
+# run help(df) and focus on the first 3 arguments. 
+help(df)
+
 # It works almost exactly like the dt function but with 2 inputs for degrees of freedom. 
-# One for the residual (or error) degrees of freedom and one for the 
+# df1 is the group degrees of freedom and df2 is for the error degrees of freedom. 
 x=seq(0,6,by=0.001)
 fdistr=df(x,df1 = 2, df2 = 57)
 
-
+# Now lets plot the F distribution. 
 plot(x,fdistr,type="l",
      xlim = c(0,5), 
      ylim = c(0,1),
@@ -69,38 +71,89 @@ plot(x,fdistr,type="l",
      ylab="Probability Density",
      main =" F distribution with 2 and 57 degrees of freedom (df)")
 
+# run this line of code to look at the rejection region
 polygon(c(x[x>=3.15], max(x), 3.15), c(fdistr[x>=3.15], 0, 0), col="red")
+
+# Scroll back up to our table, where does your F value fall on this graph? does it make sense that you were/were'nt able to reject the null?
 ```
 Multiple Comparisons
 
-There are a large variety of different multiple comparison tests that can be performed in R. These tests use a variety of complicated mathematics to get around the the increased chance of type 1 error caused by running multiple tests. 
+There are a large variety of different multiple comparison tests that can be performed in R. These tests use a variety of different techniques to adjust P-values. 
 
-```{r}
-# The first test we will try out is the TukeyHSD test (probably the most common form of multiple 
-# comparison). 
-
-# Before even attempting this test, it is important to run an ANOVA test first!
-Av_object <- lm(values~group,data=data)
-anova(Av_object)
-
-# If our ANOVA finds that at least one mean is significantly different, then we can conduct a Tukey 
-# Kramer test using TukeyHSD. 
-TukeyHSD(aov(Av_object), conf.level=0.95)
-```
-Other multiple comparisons in r utilize a function called pairwise.t.test. This function is used to perform multiple two-sample t-tests between all of the different sample groups, so it does that thing I told you never to do. Luckily, it has an option to adjust the P-values of these t-tests based on different multiple comparison methods. 
+Many multiple comparisons in r utilize a function called pairwise.t.test. This function is used to perform multiple two-sample t-tests between all of the different sample groups, so it does that thing I told you never to do. Luckily, it has an option to adjust the P-values of these t-tests based on different multiple comparison methods. 
 ```{r}
 # try running help("pairwise.t.test")
 help("pairwise.t.test")
 # rather than using a formula object, you just specify the two vectors you are looking at. 
 
-#perform a pairwise t-test using the Bonferroni method ("bonf")
-pairwise.t.test(data$values, data$group, p.adj = "bonf",alternative="two.sided")
-
-# Unfortunaetely, the output of pairwise.t.test is different from TukeyHSD, but it is not too hard to 
-# understand. 
+#for educational purposes, lets do a pairwise t-test with NO P value adjustment whatsoever ("none"). 
+pairwise.t.test(data$values, data$ind, p.adj= "none", alternative="two.sided")
 ```
+```{r}
+#now perform a pairwise t-test using the Bonferroni method ("bonf")
+pairwise.t.test(data$values, data$ind, p.adj = "bonf",alternative="two.sided")
+# Can you see the difference between the two P-values? 
+```
+
+Let's look at what is actually happening with our adjusted P values. 3.85 is the adjusted critical value for sample size = 20 and 50 groups. 
+```{r}
+#create a t-distribution just like we did in the t-test section?
+x=seq(-5,5,by=0.001)
+tdistr=dt(x,17)
+plot(x,tdistr,type="l",main="t distribution",xlab="t",ylab="Porobability Density") + polygon(c(x[x>=3.85], max(x), 3.85), c(tdistr[x>=3.85], 0, 0), col="red") + abline(v=3.85, col="red")
+
+# Add the code below to your plot to create a rejection region using our altered P-value. 
+# + polygon(c(x[x>=3.85], max(x), 3.85), c(tdistr[x>=3.85], 0, 0), col="red") #
+
+# can you even see the rejection region? let's draw a line to make it more clear
+# + abline(v=3.85, col="red") #
+
+# look how small it is! You would need a very large effect or a lot of power to find any significant 
+# results. What if we want more power for our experiment? 
+
+```
+
+The Benjamini-Hochberg (BH) method
+
+The Benjamini-Hochberg method is more of an algorithm than an equation. We are going to use tables to visualize how the method decides which P-values are going to stay significant and which we are going to decide are no longer significant. 
+
+
+```{r}
+# We are going to need to load a package called dplyr for this. 
+library(dplyr)
+
+# We are going to create a set of P-values that we theoretically could have gotten from performing 10 
+# tests. 
+p_values=c(0.38,0.22,0.45,0.04,0.06,0.008,0.001,0.15,0.013,0.59)
+
+# then, the first step of the Benjamini Hochberg method is to order the P-values from largest to 
+# smallest. We are going to do this using the sort() function. Call this sorted vector p_sort
+p_sort=sort(p_values)
+
+# Now we are going to create a rank for every p-value. create a list from 1 to 10 using c(). 
+rank=c(1,2,3,4,5,6,7,8,9,10)
+
+# Now use cbind to bind the rank and the sorted P-values into a dataframe (should be familiar to what we # did at te beginning of the markdown file.)
+df = data.frame(cbind(p_sort,rank))
+
+#The last step is the most important one. We are going to compare our ordered P-values to a set of BH 
+# critical values. BH critical values are calculated as i/m*Q where
+# i = the rank of the test. 
+# m = the total number of tests. 
+# Q equals the false discovery rate we are aiming for (0.05)
+
+# now, we will use the mutate function to create a new column with the critical values for each test.
+# The mutate function takes the values from other columns and uses an equation to calculate the values 
+# for a new column. 
+# the mutate function is in the form mutate(dataframe, new_column name = equation)
+df = mutate(df, critical_val = rank/10*0.05)
+
+# Let's look at our dataframe. 
+```
+
+The Benjamini-Hochberg method is more of an algorithm than an equation. Let's go back to the slides to see what is going on under the hood of the R function. 
 
 ```{r}
 #finally, let's perform a pairwise t-test using the BH method ("BH")
-pairwise.t.test(data$values, data$group, p.adj = "BH",alternative="two.sided")
+pairwise.t.test(data$values, data$ind, p.adj = "BH",alternative="two.sided")
 ```

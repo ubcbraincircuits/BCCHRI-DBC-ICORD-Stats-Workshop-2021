@@ -1,4 +1,3 @@
-#!!!!!# For this script I need to create a bunch of blanks to let people fill stuff in. 
 Sampling distributions. 
 The sampling distribution of a statistic represents all of the different different sample statistics we could get when we draw a random sample from a population. 
 ```{r}
@@ -7,7 +6,7 @@ The sampling distribution of a statistic represents all of the different differe
 x <- seq(0, 20, by = .1)
 y <- dnorm(x, mean = 10, sd = 2.5)
 
-# now we plot the distribution
+# now we plot the distribution using plot(). 
 plot(x,y,type='l', main="Example of a sampling distribution", ylab='Probability',
      xlab='Sample Statistic')
 
@@ -16,22 +15,23 @@ plot(x,y,type='l', main="Example of a sampling distribution", ylab='Probability'
 
 #Now lets draw a bunch of points from an idential distribution and see what they look like using the 
 #hist() function. Try help(hist) if stuck.
-
 ```
-This shape probably looks familiar to most of you. This is a normal distribution. It is going to come up a lot for reasons we are about to go over. 
+This shape probably looks familiar to most of you. This is a normal distribution. It is going to come up a lot for reasons we are about to go over. Let's go back to the slides now. 
 
 
 The t statistic and the t distribution. 
 ```{r}
 #What does our t distribution look like?
-tdistr=dt(seq(-5,5,by=.1),17)
-plot(seq(-5,5,by=.1),tdistr,type="l",main="t distribution",xlab="t",ylab="Porobability Density")
+x=seq(-5,5,by=0.001)
+tdistr=dt(x,17)
+plot(x,tdistr,type="l",main="t distribution",xlab="t",ylab="Porobability Density") 
 
-# Let's add a not so random line to represent a theoretical t statistic. 
-plot(seq(-5,5,by=.1),tdistr,type="l",main="t distribution",xlab="t",ylab="Probability Density")+
-  abline(v=1.75, col='red')
+# Look at the plot, and then add the code below to your plot to create a rejection region. 
+# + polygon(c(x[x>=1.75], max(x), 1.75), c(tdistr[x>=1.75], 0, 0), col="red") #
+
+
 ```
-What I just did is sort of like a manual version of conducting a t-test. R has a whole bunch of built in machinery that makes doing t-tests much simpler. Let's actually do a t-test now. 
+What we just did is sort of like a manual version of conducting a t-test. R has a whole bunch of built in machinery that makes doing t-tests much simpler. Let's actually do a t-test now. 
 
 Let's say the test we are trying to accomplish it to see if the data is
 consistent with a population mean of 10.  This will be our H0: mu=10.
@@ -48,17 +48,15 @@ One Sample T-test.
 # First set the sample size we are going to use when we draw our sample. Let's do 20 replicates and call 
 # the variable n
 
-# create a sample to use via the rnorm command and call it x. Give it a mean of 10 and a standard  
-# deviation of 2.5.  plot it in a histogram and take a look. 
+
+# create a sample to use via the rnorm command. Give it a mean of 10 and a standard deviation of 2.5
+# plot it in a histogram using hist() to take a look at the data.
 x=
 
-#Quickly remake the t distribution. 
-tdistr=dt(seq(-5,5,by=.1),17)
-plot(seq(-5,5,by=.1),tdistr,type="l",main="t distribution",xlab="t",ylab="Porobability Density")
+#Quickly remake the t distribution, by copying the code we used last time. 
 
 # what's our t value and where is it on the distribution?  What do you predict for the result of
 # the test?
-
 obs_t=(mean(x)-10)/(sd(x)/sqrt(length(x)))
 
 # R's t test function is called t.test
@@ -97,10 +95,7 @@ h_out/N_iter
 # Ok that's all for now.  Go back to slides.
 ```
 Two sample T-test.
-
-Rather than comparing one sample to a known mean, we are going to compare two samples from slightly different populations to each other. 
 ```{r}
-
 # first make 2 large samples, lets say 200 and 400 samples each. 
 # The mean of x will be 10 and the mean of y will be 11. 
 x=
@@ -108,10 +103,8 @@ y=
 
 # Look at them using hist().
 
-```
-```{r}
 # very cute, but let's reduce the number of data points to make this a
-# little more messy, I mean realistic. Lets do sample sizes of 20 and 40. 
+# little more messy, I mean realistic. Lets do sample sizes of 20 and 40.
 
 x=
 y=
@@ -121,8 +114,8 @@ y=
 hist(x)
 hist(y)
 ```
-```{r}
 
+```{r}
 # Here I made the variances equal.  In practice if we are using a two
 # sample t test and allowing ourselves to assume equal variances then we
 # compute what is called the pooled standard deviation.  
@@ -153,20 +146,20 @@ plot(seq(-5,5,by=.1),tdistr,type="l",main="t distribution, 2 samp test example",
 # Ok now use the t.test to confirm our suspicions. look through the help file and figure out how to set 
 # the variances as equal
 
+
+
 # Note the test can also be done without assuming the variances are equal
 
 # In this case the t stat is a bit easier to calculate, just as we had in
-# the presentation.  No pooled sd.  However the dof is approxiamte and is
-# estimated from the data using a formula you can look up.
-# try running t.test again without specifying that the variances are equal. 
+# the presentation.  No pooled sd.  However this test is less accurate than 
+# a testmade with the assumption of equal variances.
 
 # Due to this approximation the test stat is only approximately t
 # distributed so you only get approximately alpha significance.
 
+# back to slides for a moment
 ```
 Paired T-test
-
-We are going to look at two samples again, but now we are going to imagine that we are sampling the same individuals from the same population after some kind of treatment. 
 ```{r}
 # ok we need two samples again.
 
@@ -176,6 +169,8 @@ y=
 # same number of data points this time.
 
 # ok, so what are our diffs?
+  
+the_diffs=
 
 # What's our H0.  Let's say it is that the means are equal again.
 
@@ -186,9 +181,11 @@ obs_t=mean(the_diffs)/(sd(the_diffs)/sqrt(length(the_diffs)))
 # what does our t distribution look like? Where is our observed t value?
 # What's the likely outcome of our test?
 
+tdistr=dt(seq(-5,5,by=.1),length(the_diffs)-1)
+plot(seq(-5,5,by=.1),tdistr,type="l",main="t distribution, paired test example",xlab="",ylab="")
+
 # What's our Ha?  Let's say that it is mu1<mu2, so we need to look at a
 # rejection region in the left tail of the distribution.
 
 # ok do the test.  it's t.test again but this time we are going to specify that they are paired. 
-
 ```

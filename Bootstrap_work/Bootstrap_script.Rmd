@@ -149,7 +149,7 @@ How about the standard error?
 
 ```{r}
 # using our bootstrap distribution, call it avg_RS_se
-# remeber, the standard deviation function in R is sd()
+# remember, the standard deviation function in R is sd()
 avg_RS_se=sd(avg_RS)
 # Using the bootstrap distribution from boot, call it m_se. 
 m_se=sd(m)

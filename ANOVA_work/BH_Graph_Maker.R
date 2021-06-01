@@ -29,14 +29,14 @@ for (i in 0:N_iter_diff){
 }
 
 # Now create a histogram for both sets of P-values. 
-hist(p_same, breaks=20, col=col)
-hist(p_diff, breaks=20, col=col)
+hist(p_same, breaks=20, xlab="p_value", main="Null is True")
+hist(p_diff, breaks=20, xlab="p_value", main="Null is False")
 
 # now combine all of the P-values together using c(). Call this combined vector p_all. 
 p_all=c(p_same,p_diff)
 
 # Create a histogram of P-all
-hist(p_all, breaks=20)
+hist(p_all, breaks=20, xlab="p_value", main="Combined")
 
 # now add some extra detail using the code below. 
 abline(h=450, col="red")

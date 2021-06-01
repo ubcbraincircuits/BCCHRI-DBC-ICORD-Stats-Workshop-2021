@@ -81,9 +81,9 @@ for (i in 1:nresamps) {
 
 dat_RS=
 
-# take a look at the resamples to see how their histograms look, do a loop
+# take a look at the resamples to see how their histograms look 
+# do a loop and a subplot.
 
-# and a subplot.
 # Pretty similiar??  Should be...
 ```
 ok, now that we can generate lots of resamples let's look at the distribution of different means in our resamples.
@@ -92,7 +92,8 @@ ok, now that we can generate lots of resamples let's look at the distribution of
 
 dat_RS=
 
-# easy to find the mean of the resamples. we are going to use the apply function to calculate the mean for every resample in our matrix. 
+# easy to find the mean of the resamples. we are going to use the apply function to calculate the mean  
+# for every resample in our matrix. 
 
 avg_RS=apply(dat_RS,1,mean)
 
@@ -127,10 +128,10 @@ samplemean <- function(data, i) {
 }
 
 # Run the boot function. 
-output = boot(data=dat,statistic=samplemean,R=2000)
+output = 
 
 # Save the "t" value of the output using output$t in a variable named m
-m = output$t
+m = 
 # This m is our bootstrap distribution.  
 ```
 Let's head back to the slides for now. 
@@ -141,8 +142,9 @@ Now that we have the bootstrap distribution, we can use it to estimate all kinds
 How about the standard error?
 
 ```{r}
+# Calculate standard error:
 # using our bootstrap distribution, call it avg_RS_se
-# remeber, the standard deviation function in R is sd()
+# remember, the standard deviation function in R is sd()
 
 # Using the bootstrap distribution from boot, call it m_se. 
 
@@ -175,8 +177,7 @@ print(length(which(m>per_ci$percent[,4] & m < per_ci$percent[,5]))/length(m))
 
 # What if our bootstrap distribution was not normal? use the bias corrected accelerated confidence 
 # interval.again, use boot.ci and change the type to bca
-bca_ci=boot.ci(output, type="bca")
-print(bca_ci)
+bca_ci=
 
 # It adjusts to correct for bias and skewness in the bootstrap distribution.
 ```
@@ -247,7 +248,7 @@ x_diff_obs=
 # them all together in a big vector by concatenation, call it x:
 # You can concatonate in R using the c() function. 
 
-x=c(x1, x2)
+x=
 
 # Check it by making a single resample. For x1 the extra argument should be
 # 27 (length(x1)) & it should be 47 (length(x2)) for x2

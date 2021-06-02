@@ -79,7 +79,7 @@ for (i in 1:nresamps) {
 # This function returns a 2 dimensional matrix of resamples. What is a 2 dimensional matrix? For our purposes it is a table. Just a table. Sounds fancy. Really boring. 
 
 ```{r}
-# Write a command using our function to do 10 resamples.
+# Write a command using our function to do 10 resamples. Store the output in a variable called dat_RS. 
 
 dat_RS=make_resamples(dat,10)
 
@@ -93,13 +93,12 @@ for (i in 1:10) {
 # Pretty similiar??  Should be...
 ```
 ok, now that we can generate lots of resamples let's look at the distribution of different means in our resamples.
-#!!!!# make sure to be clear about the fact that each of these resamples (refer to the histograms above) are going to have their means calculated. 
 ```{r}
-# let's get 2000 resamples
+# let's get 2000 resamples. Store the output in dat_RS again. 
 
 dat_RS=make_resamples(dat,2000)
 
-# easy to find the mean of the resamples. we are going to use the apply function to calculate the mean for every resample in our matrix. 
+# easy to find the mean of the resamples. we are going to use the apply function to calculate the mean for every resample in our matrix. We are going to store it in a variable called avg_RS. 
 
 avg_RS=apply(dat_RS,1,mean)
 
@@ -108,13 +107,13 @@ avg_RS=apply(dat_RS,1,mean)
 
 hist(avg_RS,breaks=30,main="Bootstrap distribution")
 
-# Btw, what was our actual sample mean?
+# Btw, what was our actual sample mean? Use the mean() function. 
 
 mean(dat)
 # it is the same of the mean of this histogram isn't it? 
 ```
 Where do you expect this to fall on the histogram?  What shape should this
-distribution have? #!!!!# the hell does this mean? 
+distribution have? #!!!!# what does this mean? 
 
 What is this distribution?
 
@@ -126,7 +125,7 @@ boot.
 ```{r}
 #Check the boot package doc using help("boot") There is a lot of information in this help file, but you 
 #should focus on the first 3 inputs. Use the function to find the means of 2000
-#resamples. store the result in a matrix called m for mean.
+#resamples. store the resulting distribution in a variable called dist
 
 library(boot)
 
@@ -137,8 +136,8 @@ samplemean <- function(data, i) {
 }
 
 output = boot(data=dat,statistic=samplemean,R=2000)
-# Save the "t" value of the output using output$t in a variable named m
-m = output$t
+# Save the "t" value of the output (the distribution) using output$t in a variable named dist
+dist = output$t
 ```
 Let's head back to the slides for now. 
 
@@ -151,8 +150,8 @@ How about the standard error?
 # using our bootstrap distribution, call it avg_RS_se
 # remember, the standard deviation function in R is sd()
 avg_RS_se=sd(avg_RS)
-# Using the bootstrap distribution from boot, call it m_se. 
-m_se=sd(m)
+# Using the bootstrap distribution from boot, call it dist_se. 
+dist_se=sd(dist)
 ```
 
 And confidence intervals?
@@ -164,33 +163,34 @@ And confidence intervals?
 # traditional t-confidence interval is stat +/- t*SE_stat 
 # for alpha=0.05;
 alpha=0.05
-tcrit = qt(1-alpha/2,1550);
-mean(m)-tcrit*sd(m)
-mean(m)+tcrit*sd(m)
+tcrit = qt(1-alpha/2,1550) #!!!# wait a minute where did this input come from? 
+mean(dist)-tcrit*sd(dist)
+mean(dist)+tcrit*sd(dist)
+
+help(qt)
 
 # Let's also look at the percentile method. For this we are going to use the boot.ci part of the boot 
 # package. run help(boot.ci) and focus on the first 3 arguments. 
 help(boot.ci)
 
-# create a percentile bootstrap confidence interval. 
+# create a percentile bootstrap confidence interval. Store the output in a variable called per_ci and 
+# use print() to display it. 
 per_ci=boot.ci(output, type="perc")
 print(per_ci)
 
 # Does it make sense?  Figure out how many elements in our bootstrap
 # distribution fall within these limits.  Use numel and find perhaps.
 
-print(length(which(m>per_ci$percent[,4] & m < per_ci$percent[,5]))/length(m))
+print(length(which(dist>per_ci$percent[,4] & dist < per_ci$percent[,5]))/length(dist))
 
 # Nice.  Willing to except a little descrepancy here since the bootci is
 # calculating a new bootstrap distribution compared to the one we used for
-# m.
+# dist.
 
 # What if our bootstrap distribution was not normal? use the bias corrected accelerated confidence 
-# interval.again, use boot.ci and change the type to bca
+# interval.again, use boot.ci and change the type to bca. save the output in a variable called bca_ci
 bca_ci=boot.ci(output, type="bca")
 print(bca_ci)
-
-# It adjusts to correct for bias and skewness in the bootstrap distribution.
 ```
 Before we get into Permutation testing, I am going to remake my resampling function so that we can get resamples with a specific number of data points. I am going to call it make_resamples2
 
@@ -260,11 +260,13 @@ x_diff_obs=mean(x2)-mean(x1)
 # this were the case.  Call it the permutation distribution to distinguish 
 # it from the bootstrap.  We have a total of 27 + 47=74 observtions.  Let's put
 # them all together in a big vector by concatenation, call it x:
+# You can concatonate in R using the c() function. 
 
-x=c(x1, x2) # !!!# I may have to provide an example of how to concatonate. 
+x=c(x1, x2) 
 
 # Check it by making a single resample. For x1 the extra argument should be
 # 27 (length(x1)) & it should be 47 (length(x2)) for x2
+# Call your resamples x1_RS and x2_RS
 
 x1_RS=make_resamples2(x,1,length(x1)) 
 x2_RS=make_resamples2(x,1,length(x2))
@@ -275,10 +277,15 @@ x1_RS=make_resamples2(x,5000,length(x1));
 x2_RS=make_resamples2(x,5000,length(x2));
 
 # find the means and subtract them, take the mean on the data points.
-# Second dimension.
+# You are going to need to use the apply function to take the mean of each row. 
+# Save the means in variables called x1_RS_avg and x2_RS_avg.
+
+help(apply)
 x1_RS_avg=apply(x1_RS,1,mean)
 x2_RS_avg=apply(x2_RS,1,mean)
 
+# Calculate the difference between all of our means. #!!!# does the order matter?
+# Save the output in a varibale called x_diff.
 x_diff=x1_RS_avg-x2_RS_avg;
 
 # make a histogram to have a look at the distribution
@@ -286,7 +293,6 @@ x_diff=x1_RS_avg-x2_RS_avg;
 hist(x_diff,breaks=30,main = "Permutation Distribution")
 
 # now figure out our p val.
-
 # Assuming our alternate hypothesis is that mean of x2 > mean of x1
 
 print(length(which(x_diff >= x_diff_obs))/length(x_diff))

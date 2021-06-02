@@ -3,18 +3,20 @@ The sampling distribution of a statistic represents all of the different differe
 ```{r}
 # lets create a super basic normal distribution to represent a sampling distribution.
 # the mean of our distribution will be 10 and the standard deviation will be 2.5. 
-x <- seq(0, 20, by = .1)
-y <- dnorm(x, mean = 10, sd = 2.5)
+x = seq(0, 20, by = .1)
+y = dnorm(x, mean = 10, sd = 2.5)
 
 # now we plot the distribution using plot(). 
 plot(x,y,type='l', main="Example of a sampling distribution", ylab='Probability',
      xlab='Sample Statistic')
 
-# Now lets draw a single point from an identical sampling distribution using the rnorm function
-# If you are not familiar with rnorm, try running help(rnorm) and see what comes up
+# Now lets draw a single sample from an identical sampling distribution using the rnorm function
+# If you are not familiar with rnorm, try running help(rnorm) and see what comes up. Stare this sample in # a variable called sample
+sample = 
 
-#Now lets draw a bunch of points from an idential distribution and see what they look like using the 
+#Now lets draw 5000 samples from an idential distribution and see what they look like using the 
 #hist() function. Try help(hist) if stuck.
+sample = 
 ```
 This shape probably looks familiar to most of you. This is a normal distribution. It is going to come up a lot for reasons we are about to go over. Let's go back to the slides now. 
 
@@ -23,17 +25,17 @@ The t statistic and the t distribution.
 ```{r}
 #What does our t distribution look like?
 x=seq(-5,5,by=0.001)
-tdistr=dt(x,17)
-plot(x,tdistr,type="l",main="t distribution",xlab="t",ylab="Porobability Density") 
+tdistr=dt(x,19)
+plot(x,tdistr,type="l",main="t distribution",xlab="t",ylab="Porobability Density")
 
-# Look at the plot, and then add the code below to your plot to create a rejection region. 
-# + polygon(c(x[x>=1.75], max(x), 1.75), c(tdistr[x>=1.75], 0, 0), col="red") #
+# Look at the plot, and then append the code below to your plot to create a rejection region. 
+# + polygon(c(x[x>=1.73], max(x), 1.73), c(tdistr[x>=1.73], 0, 0), col="red") #
 
 
 ```
 What we just did is sort of like a manual version of conducting a t-test. R has a whole bunch of built in machinery that makes doing t-tests much simpler. Let's actually do a t-test now. 
 
-Let's say the test we are trying to accomplish it to see if the data is
+Let's say the test we are trying to accomplish is to see if the data is
 consistent with a population mean of 10.  This will be our H0: mu=10.
 
 What's our Ha?  
@@ -45,23 +47,30 @@ side of the distribution, so we will need to set the greater than option.
 One Sample T-test. 
 
 ```{r}
-# First set the sample size we are going to use when we draw our sample. Let's do 20 replicates and call 
-# the variable n
+# First set the sample size we are going to use when we draw our sample. Let's do a sample size of 20 and
+#call the variable n
+n = 20
 
+# create a sample to use via the rnorm command. Call this variable "sample".
+# Give it a mean of 10 and a standard deviation of 2.5
+# plot it in a histogram using hist()
+sample = 
 
-# create a sample to use via the rnorm command. Give it a mean of 10 and a standard deviation of 2.5
-# plot it in a histogram using hist() to take a look at the data.
-x=
-
-#Quickly remake the t distribution, by copying the code we used last time. 
+# Quickly remake the t distribution, by copying the code we used last time. 
+x=seq(-5,5,by=0.001)
+tdistr=dt(x,19)
+plot(x,tdistr,type="l",main="t distribution",xlab="t",ylab="Porobability Density")
 
 # what's our t value and where is it on the distribution?  What do you predict for the result of
 # the test?
-obs_t=(mean(x)-10)/(sd(x)/sqrt(length(x)))
+obs_t=(mean(sample)-10)/(sd(sample)/sqrt(length(sample)))
 
-# R's t test function is called t.test
+# R's t test function is called t.test. run help(t.test) to get a feel for the function 
+
 
 # do the t.test:
+# remember, the mean of our null is 10 and we want to a right one-sdided (greater than) test
+
 
 # There are a lot of outputs, but for our purposes we want to focus on 
 # the p-value. 
@@ -96,23 +105,22 @@ h_out/N_iter
 ```
 Two sample T-test.
 ```{r}
-# first make 2 large samples, lets say 200 and 400 samples each. 
-# The mean of x will be 10 and the mean of y will be 11. 
+# first make 2 large samples using rnorm again. lets say 200 and 400 samples each. 
+# Call the variables x and y.The mean of x will be 10 and the mean of y will be 11. 
+# set the standard deviation to 2.5 
 x=
 y=
 
 # Look at them using hist().
 
 # very cute, but let's reduce the number of data points to make this a
-# little more messy, I mean realistic. Lets do sample sizes of 20 and 40.
+# little more messy, I mean realistic. Lets do sample sizes of x = 20 and y = 40 (same sd).
 
 x=
 y=
 
-# Look at them.
+# Look at them using hist().
 
-hist(x)
-hist(y)
 ```
 
 ```{r}
@@ -147,7 +155,6 @@ plot(seq(-5,5,by=.1),tdistr,type="l",main="t distribution, 2 samp test example",
 # the variances as equal
 
 
-
 # Note the test can also be done without assuming the variances are equal
 
 # In this case the t stat is a bit easier to calculate, just as we had in
@@ -156,20 +163,18 @@ plot(seq(-5,5,by=.1),tdistr,type="l",main="t distribution, 2 samp test example",
 
 # Due to this approximation the test stat is only approximately t
 # distributed so you only get approximately alpha significance.
-
-# back to slides for a moment
 ```
 Paired T-test
 ```{r}
-# ok we need two samples again.
+# ok we need two samples again. Let's call them x and y again. 
+# set both sample sizes to 200 this time.set the mean of one of x to 10 and the mean of y to 11. 
+# standard deviation for both is 2.5
 
 x=
 y=
 
-# same number of data points this time.
-
-# ok, so what are our diffs?
-  
+# ok, so what are our diffs? does the order matter? x-y? y-x? Check at the end to see 
+# if your results make sense. 
 the_diffs=
 
 # What's our H0.  Let's say it is that the means are equal again.

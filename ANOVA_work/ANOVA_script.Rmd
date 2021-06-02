@@ -124,7 +124,7 @@ library(dplyr)
 
 # We are going to create a set of P-values that we theoretically could have gotten from performing 10 
 # tests. 
-p_values=c(0.38,0.22,0.45,0.04,0.06,0.008,0.001,0.15,0.013,0.59)
+p_values=c(0.38,0.022,0.45,0.04,0.06,0.008,0.001,0.15,0.013,0.59)
 
 # then, the first step of the Benjamini Hochberg method is to order the P-values from largest to 
 # smallest. We are going to do this using the sort() function. Call this sorted vector p_sort
@@ -155,6 +155,7 @@ df
 Now that we know what the test is doing, we can finally run it in R. 
 
 ```{r}
+#!!!!# Note that we are going back to the original data. 
 #finally, let's perform a pairwise t-test using the BH method ("BH")
 pairwise.t.test(data$values, data$ind, p.adj = "BH",alternative="two.sided")
 

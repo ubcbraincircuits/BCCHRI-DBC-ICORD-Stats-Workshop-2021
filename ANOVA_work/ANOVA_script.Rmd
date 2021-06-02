@@ -1,8 +1,9 @@
 Generate some data
 Let's generate some data using three different calls to the rnorm function to represent samples from three different populations.
 ```{r}
-#Use a sample size of 20 for all of the samples. Set the mean of the first two samples as 2 and set the 
-#mean of the last sample as 4. Use a standard deviation of 1.5 for all samples. 
+# Use a sample size of 20 for all of the samples. Set the mean of the first two samples as 2 and set the 
+# mean of the last sample as 4. Use a standard deviation of 1.5 for all samples. We are going to call
+# the three samples x1, x2, and x3. 
 x1=rnorm(20, mean=2, sd=1.5)
 x2=rnorm(20, mean=2, sd=1.5)
 x3=rnorm(20, mean=4, sd=1.5)
@@ -14,13 +15,14 @@ boxplot(x1,x2,x3)
 The ANOVA function is a little bit different from the other functions in that it works best when your data is organized a certain way. Luckily, this is the way your data will usually be organized after collection anyway.
 ```{r}
 # lets bind the example data together using cbind() and then put it into a dataframe with data.frame(). 
-# let's call our new dataframe df. 
+# let's call our new dataframe data. 
 data = data.frame(cbind(x1,x2,x3))
 
 # Then we are going to reorganize it with stack(). 
 data = stack(data)
+#be sure to take a second to look at your dataframe. Do you understand its stucture? 
 
-# now are data is all set for ANOVA.
+# now are data is all set for ANOVA. 
 ```
 
 ANOVA
@@ -60,6 +62,7 @@ help(df)
 
 # It works almost exactly like the dt function but with 2 inputs for degrees of freedom. 
 # df1 is the group degrees of freedom and df2 is for the error degrees of freedom. 
+# create a sequence using seq() and call it x. save you f distribution as a variable called fdist. 
 x=seq(0,6,by=0.001)
 fdistr=df(x,df1 = 2, df2 = 57)
 
@@ -84,26 +87,28 @@ Many multiple comparisons in r utilize a function called pairwise.t.test. This f
 ```{r}
 # try running help("pairwise.t.test")
 help("pairwise.t.test")
-# rather than using a formula object, you just specify the two vectors you are looking at. 
+# note that rather than using a formula object, you just specify the two columns you are looking at in 
+# your dataframe. 
 
-#for educational purposes, lets do a pairwise t-test with NO P value adjustment whatsoever ("none"). 
+# for educational purposes, lets do a pairwise t-test with NO P value adjustment whatsoever ("none"). 
 pairwise.t.test(data$values, data$ind, p.adj= "none", alternative="two.sided")
 ```
 ```{r}
-#now perform a pairwise t-test using the Bonferroni method ("bonf")
+# now perform a pairwise t-test using the Bonferroni method ("bonf")
 pairwise.t.test(data$values, data$ind, p.adj = "bonf",alternative="two.sided")
 # Can you see the difference between the two P-values? 
 ```
 
-Let's look at what is actually happening with our adjusted P values. 3.85 is the adjusted critical value for sample size = 20 and 50 groups. 
+Let's look at what is actually happening when we make a bonferroni adjustment. We are going to see what happens to the rejection region of our t-distribution when we conduct 50 seperate tests (all with a sample size of 20) and make the bonferroni adjustment. 
 ```{r}
-#create a t-distribution just like what we did in the t-test section.
+# create a t-distribution just like what we did in the t-test section.
 x=seq(-5,5,by=0.001)
-tdistr=dt(x,17)
+tdistr=dt(x,19)
 plot(x,tdistr,type="l",main="t distribution",xlab="t",ylab="Porobability Density") + polygon(c(x[x>=3.85], max(x), 3.85), c(tdistr[x>=3.85], 0, 0), col="red") + abline(v=3.85, col="red")
 
 # Add the code below to your plot to create a rejection region using our altered P-value. 
 # + polygon(c(x[x>=3.85], max(x), 3.85), c(tdistr[x>=3.85], 0, 0), col="red") #
+# 3.85 is the adjusted critical value for sample size = 20 and 50 tests. 
 
 # can you even see the rejection region? let's draw a line to make it more clear
 # + abline(v=3.85, col="red") #
@@ -130,24 +135,25 @@ p_values=c(0.38,0.022,0.45,0.04,0.06,0.008,0.001,0.15,0.013,0.59)
 # smallest. We are going to do this using the sort() function. Call this sorted vector p_sort
 p_sort=sort(p_values)
 
-# Now we are going to create a rank for every p-value. create a list from 1 to 10 using c(). 
+# Now we are going to create a rank for every p-value. create a list from 1 to 10 using c() and call
+# it rank. 
 rank=c(1,2,3,4,5,6,7,8,9,10)
 
-# Now use cbind to bind the rank and the sorted P-values into a dataframe (should be familiar to what we # did at te beginning of the markdown file.)
-df = data.frame(cbind(p_sort,rank))
+# Now use cbind to bind the rank and the sorted P-values into a dataframe (should be familiar to what we
+# did when creating the dataframe for ANOVA). Call this new dataframe BH_df. 
+BH_df = data.frame(cbind(p_sort,rank))
 
 #The last step is the most important one. We are going to compare our ordered P-values to a set of BH 
 # critical values. BH critical values are calculated as i/m*Q where
 # i = the rank of the test. 
 # m = the total number of tests. 
 # Q equals the false discovery rate we are aiming for (0.05)
-
 # now, we will use the mutate function to create a new column with the critical values for each test.
 # The mutate function takes the values from other columns and uses an equation to calculate the values 
 # for a new column. 
 # the mutate function is in the form mutate(dataframe, new_column name = equation)
-df = mutate(df, critical_val = rank/10*0.05)
-df
+BH_df = mutate(df, critical_val = rank/10*0.05)
+BH_df
 
 # Let's look at our dataframe. 
 ```
@@ -155,8 +161,9 @@ df
 Now that we know what the test is doing, we can finally run it in R. 
 
 ```{r}
-#!!!!# Note that we are going back to the original data. 
-#finally, let's perform a pairwise t-test using the BH method ("BH")
+#finally, let's perform a pairwise t-test using the bonferroni adjustment. 
+# we are going to go back to using the data from the three samples we made at the beginning of this 
+# workshop (the one we called data)
 pairwise.t.test(data$values, data$ind, p.adj = "BH",alternative="two.sided")
 
 # compare this output to the output we got from the Bonferroni method. 

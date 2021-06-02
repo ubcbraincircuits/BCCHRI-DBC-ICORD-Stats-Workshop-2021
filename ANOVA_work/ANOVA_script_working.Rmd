@@ -1,8 +1,9 @@
 Generate some data
 Let's generate some data using three different calls to the rnorm function to represent samples from three different populations.
 ```{r}
-#Use a sample size of 20 for all of the samples. Set the mean of the first two samples as 2 and set the 
-#mean of the last sample as 4. Use a standard deviation of 1.5 for all samples. 
+# Use a sample size of 20 for all of the samples. Set the mean of the first two samples as 2 and set the 
+# mean of the last sample as 4. Use a standard deviation of 1.5 for all samples. We are going to call
+# the three samples x1, x2, and x3. 
 x1=
 x2=
 x3=
@@ -14,7 +15,7 @@ x3=
 The ANOVA function is a little bit different from the other functions in that it works best when your data is organized a certain way. Luckily, this is the way your data will usually be organized after collection anyway.
 ```{r}
 # lets bind the example data together using cbind() and then put it into a dataframe with data.frame(). 
-# let's call our new dataframe df. 
+# let's call our new dataframe data. 
 data = 
 
 # Then we are going to reorganize it with stack(). 
@@ -76,7 +77,8 @@ Many multiple comparisons in r utilize a function called pairwise.t.test. This f
 ```{r}
 # try running help("pairwise.t.test")
 
-# rather than using a formula object, you just specify the two vectors you are looking at. 
+# note that rather than using a formula object, you just specify the two columns you are looking at in 
+# your dataframe using dataframe$column_name
 
 #for educational purposes, lets do a pairwise t-test with NO P value adjustment whatsoever ("none"). 
 
@@ -87,12 +89,13 @@ Many multiple comparisons in r utilize a function called pairwise.t.test. This f
 # Can you see the difference between the two P-values? 
 ```
 
-Let's look at what is actually happening with our adjusted P values. 3.85 is the adjusted critical value for sample size = 20 and 50 groups. 
+Let's look at what is actually happening when we make a bonferroni adjustment. We are going to see what happens to the rejection region of our t-distribution when we conduct 50 seperate tests (all with a sample size of 20) and make the bonferroni adjustment. 
 ```{r}
 #create a t-distribution just like what we did in the t-test section.
 
 # Add the code below to your plot to create a rejection region using our altered P-value. 
 # + polygon(c(x[x>=3.85], max(x), 3.85), c(tdistr[x>=3.85], 0, 0), col="red") #
+# 3.85 is the adjusted critical value for sample size = 20 and 50 tests. 
 
 # can you even see the rejection region? let's draw a line to make it more clear
 # + abline(v=3.85, col="red") #
@@ -119,32 +122,35 @@ p_values=c(0.38,0.22,0.45,0.04,0.06,0.008,0.001,0.15,0.013,0.59)
 # smallest. We are going to do this using the sort() function. Call this sorted vector p_sort
 p_sort=
 
-# Now we are going to create a rank for every p-value. create a list from 1 to 10 using c(). 
+# Now we are going to create a rank for every p-value. create a list from 1 to 10 using c() and call
+# it rank.  
 rank=
 
-# Now use cbind to bind the rank and the sorted P-values into a dataframe (should be similar to what we # did at te beginning of the markdown file.)
-df = 
+# Now use cbind to bind the rank and the sorted P-values into a dataframe (should be familiar to what we
+# did when creating the dataframe for ANOVA). Call this new dataframe BH_df. 
+BH_df = 
 
 #The last step is the most important one. We are going to compare our ordered P-values to a set of BH 
 # critical values. BH critical values are calculated as i/m*Q where
 # i = the rank of the test. 
 # m = the total number of tests. 
 # Q equals the false discovery rate we are aiming for (0.05)
-
 # now, we will use the mutate function to create a new column with the critical values for each test.
 # The mutate function takes the values from other columns and uses an equation to calculate the values 
 # for a new column. 
 # the mutate function is in the form mutate(dataframe, new_column name = equation)
-df = 
-df
+BH_df = 
+BH_df
 
 # Let's look at our dataframe. 
 ```
 
-Now that we know what the test is doing, we can  just get R to run it. 
+Now that we know what the BH test is doing, we can just get R to run it. 
 
 ```{r}
-#finally, let's perform a pairwise t-test using the BH method ("BH")
+#finally, let's perform a pairwise t-test using the bonferroni adjustment. 
+# we are going to go back to using the data from the three samples we made at the beginning of this 
+# workshop (the one we called data)
 
 
 # compare this output to the output we got from the Bonferroni method. 

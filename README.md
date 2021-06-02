@@ -11,4 +11,4 @@ The workshop is split into 4 subfolders:
 Each folder contains 3 different files. A PDF copy of the workshop presentation on the folder's subject, an empty "working" version of the Rmarkdown file that participants will work through during the workshop of the form subject_script_working.rmd, and a version of the Rmarkdown file that has all of the answers filled in of the form subject_script.rmd.
 
 # Need more help?
-Please feel free to visit [Databinge][https://ninc.centreforbrainhealth.ca/databinge] if you have any questions about the workshop content. 
+Please feel free to visit [Databinge](https://ninc.centreforbrainhealth.ca/databinge) if you have any questions about the workshop content. 

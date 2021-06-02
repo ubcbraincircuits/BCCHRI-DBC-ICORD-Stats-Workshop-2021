@@ -11,7 +11,8 @@ plot(x,y,type='l', main="Example of a sampling distribution", ylab='Probability'
      xlab='Sample Statistic')
 
 # Now lets draw a single sample from an identical sampling distribution using the rnorm function
-# If you are not familiar with rnorm, try running help(rnorm) and see what comes up. Stare this sample in # a variable called sample
+# If you are not familiar with rnorm, try running help(rnorm) and see what comes up. Store this sample in
+# a variable called sample
 sample = 
 
 #Now lets draw 5000 samples from an idential distribution and see what they look like using the 
@@ -48,10 +49,10 @@ One Sample T-test.
 
 ```{r}
 # First set the sample size we are going to use when we draw our sample. Let's do a sample size of 20 and
-#call the variable n
+# call the variable n
 n = 20
 
-# create a sample to use via the rnorm command. Call this variable "sample".
+# Create a sample to use via the rnorm command. Call this variable "sample".
 # Give it a mean of 10 and a standard deviation of 2.5
 # plot it in a histogram using hist()
 sample = 

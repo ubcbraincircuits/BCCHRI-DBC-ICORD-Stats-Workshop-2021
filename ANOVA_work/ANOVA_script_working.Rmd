@@ -1,11 +1,11 @@
-Load up dplyr
+# Load up dplyr
 ```{r}
 # We are going to need to load a package called dplyr for this. 
 #If you do not have the dplyr package, then please run install.packages("dplyr")
 library(dplyr)
 ```
 
-Generate some data
+# Generate some data
 Let's generate some data using three different calls to the rnorm function to represent samples from three different populations.
 ```{r}
 # Use a sample size of 20 for all of the samples. Set the mean of the first two samples as 2 and set the 
@@ -15,13 +15,14 @@ x1=
 x2=
 x3=
 
-# Lets look at the mean and spread of each of our samples using the boxplot() function. 
+# let's look at the mean and spread of each of our samples using the boxplot() function. 
 
 ```
 
+# Organize Your Data
 The ANOVA function is a little bit different from the other functions in that it works best when your data is organized a certain way. Luckily, this is the way your data will usually be organized after collection anyway.
 ```{r}
-# lets bind the example data together using cbind() and then put it into a dataframe with data.frame(). 
+# let's bind the example data together using cbind() and then put it into a dataframe with data.frame(). 
 # let's call our new dataframe data. 
 data = 
 
@@ -40,7 +41,7 @@ data = rename(data, group=ind)
 # now our data is all set for ANOVA!
 ```
 
-ANOVA
+# ANOVA
 we are going to learn ANOVA in a kind of backwards way. We are going to start by actually conducting an ANOVA test and then we are going to use R to explore what all of the different outputs mean. 
 
 ```{r}
@@ -68,27 +69,29 @@ Av_object =
 ```
 Let's hop over to the slides so we can look at this output more closely. 
 
+# The F-statistic
 The most important output from our table is the F-statistic. The F-statistic measures the amount of variation in our data that came from differences between our treatment groups versus the amount of variation that came from differences within our treatment groups. From this F statistic we can create an f distribution that allows us to calculate P-values. 
 ```{r}
-# lets create the F distribution using the df function.
+# Let's create the F distribution using the df function.
 # run help(df) and focus on the first 3 arguments. 
 
 # It works almost exactly like the dt function but with 2 inputs for degrees of freedom. 
 # df1 is the group degrees of freedom and df2 is for the error degrees of freedom. 
 # go to slide 8 if you need a refresher on how to calculate degrees of freedom. 
 # create a sequence  between 0 and 5 using seq() and call it x. 
-# save you f distribution as a variable called fdist. 
+# save you f distribution as a variable called fdistr. 
 x=
 fdistr=
 
-# Now lets plot the F distribution. Refer back to how we plotted the t-distribution. 
+# Now let's plot the F distribution. Refer back to how we plotted the t-distribution. 
 
 # run this line of code to look at the rejection region
 polygon(c(x[x>=3.15], max(x), 3.15), c(fdistr[x>=3.15], 0, 0), col="red")
 
-# Scroll back up to our table, where does your F value fall on this graph? does it make sense that you were/were'nt able to reject the null?
+# Scroll back up to our table, where does your F value fall on this graph? does it make sense that you were/weren't able to reject the null?
 ```
-Multiple Comparisons
+
+#Multiple Comparisons
 
 There are a large variety of different multiple comparison tests that can be performed in R. These tests use a variety of different techniques to adjust P-values. 
 
@@ -99,12 +102,12 @@ Many multiple comparisons in r utilize a function called pairwise.t.test. This f
 # note that rather than using a formula object, you just specify the two columns you are looking at in 
 # your dataframe using dataframe$column_name
 
-#for educational purposes, lets do a pairwise t-test with NO P value adjustment whatsoever ("none"). 
+#for educational purposes, let's do a pairwise t-test with NO P value adjustment whatsoever ("none"). 
 
 ```
-Controlling FWER: The Bonferroni method. 
 
-The Bonferroni method is probably the simplest multiple comparison technique. In a nutshell, the bonferroni method is done by just taking taking the alpha value we are using (usually 0.05) and dividing it by the number of tests we are doing. This makes it harder and harder to find significant results as the number of tests we are doing increases. 
+#Controlling FWER: The Bonferroni method. 
+The Bonferroni method is probably the simplest multiple comparison technique. In a nutshell, the Bonferroni method is done by just taking taking the alpha value we are using (usually 0.05) and dividing it by the number of tests we are doing. This makes it harder and harder to find significant results as the number of tests we are doing increases. 
 ```{r}
 #perform a pairwise t-test using the Bonferroni method ("bonf")
 
@@ -112,7 +115,7 @@ The Bonferroni method is probably the simplest multiple comparison technique. In
 # they have been multiplied by the number of tests you did (3)!
 ```
 
-Let's look at what is actually happening when we make a bonferroni adjustment. We are going to see what happens to the rejection region of our t-distribution when we conduct 50 seperate tests (all with a sample size of 20) and make the bonferroni adjustment. 
+Let's look at what is actually happening when we make a Bonferroni adjustment. We are going to see what happens to the rejection region of our t-distribution when we conduct 50 separate tests (all with a sample size of 20) and make the Bonferroni adjustment. 
 ```{r}
 #create a t-distribution just like what we did in the t-test section.
 
@@ -128,7 +131,7 @@ Let's look at what is actually happening when we make a bonferroni adjustment. W
 
 ```
 
-The Benjamini-Hochberg (BH) method
+#The Benjamini-Hochberg (BH) method
 
 The Benjamini-Hochberg method is more of an algorithm than an equation. We are going to use tables to visualize how the method decides which P-values are going to stay significant and which we are going to decide are no longer significant. 
 
@@ -174,5 +177,5 @@ Now that we know what the BH test is doing, we can just get R to run it.
 ```
 
 ```{r}
-# do the bonferroni adjustment one more time and compare it to the BH method.
+# do the Bonferroni adjustment one more time and compare it to the BH method.
 ```

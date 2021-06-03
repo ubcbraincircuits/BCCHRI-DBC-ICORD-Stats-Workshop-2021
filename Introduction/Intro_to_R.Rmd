@@ -12,7 +12,7 @@ Rstudio is a great place for organizing your work in R and integrating other pro
 
 # What is an R-markdown file?
 The script you currently have loaded is a special kind of R script called a markdown file. R-markdown is a powerful tool for integrating R-code into documents and websites, but for now we are just using it as a convenient scripting format. 
-Everything you have been reading up to this point has been part of the markdown section of the Rmarkdown file. Now let's actually create a coding section. We are going to create a block of code using three apostrophes and {r}
+Everything you have been reading up to this point has been part of the markdown section of the Rmarkdown file. Now let's actually create a coding section. We are going to create a block of code using three grave accents (this thing ` in the upper left corner) and {r}
 ```{r}
 # everything in this grey box can be run by the R coding language. 
 # If we want to put any notes into these coding blocks, we need to turn them into comments 
@@ -108,7 +108,7 @@ library(boot)
 # and you are now ready to use it!
 
 # It is important to note that the help() function also works with functions from packages!
-help("boot")
+help(boot)
 
 # You might notice that the help file you just brought up is pretty... complicated. 
 # Help files often contain extremely technical explanations, and it takes practice to learn how 

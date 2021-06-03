@@ -18,10 +18,10 @@ The ANOVA function is a little bit different from the other functions in that it
 # let's call our new dataframe data. 
 data = 
 
-# Then we are going to reorganize it with stack(). 
+# Then we are going to reorganize it with stack(). #!!!!# Put more of a description of what stack does in normal words. Maybe even put a mini table in the comments. 
 data = 
 
-# now are data is all set for ANOVA.
+# now our data is all set for ANOVA.
 ```
 
 ANOVA
@@ -35,9 +35,9 @@ we are going to learn ANOVA in a kind of backwards way. We are going to start by
 #run help(lm). Focus on the first two arguments. 
 
 # wait, what is a formula class object? 
-# Formula class obects are specified using a tilde (~) and are used to specify a relationship between two
+# Formula class objects are specified using a tilde (~) and are used to specify a relationship between two
 # vectors.
-# Essentially, when you type A~B you are saying thet you want to test if variable A is dependent on B.
+# Essentially, when you type A~B you are saying that you want to test if variable A is dependent on B.
 # The first term is the response variable in your data and the second is the explanatory variable. 
 # The specifics of what a formula object actually is in R are complicated and beyond this workshop. 
 # for more details, look up ?formula 
@@ -45,24 +45,26 @@ we are going to learn ANOVA in a kind of backwards way. We are going to start by
 # ok, now we can actually use lm() by specifying the formula and data arguments. run lm and save the 
 # output in a variable named Av_object
 # Hint: what are our response and explanatory variables? 
-Av_object <- 
+Av_object = #!!!!# maybe rename ind to groups again, and maybe just specify that we use the column names in the function object. 
 
 # Now we are ready to actually run the ANOVA test using the anova() function. 
 
 ```
 Let's hop over to the slides so we can look at this output more closely. 
 
-The most important output from our table is the F-statistic. The F-statsitc measures the amount of variation in our data that came from differences between our treatment groups versus the amount of variation that came from differences within our treatment groups. From this F statistic we can create an f distribution that allows us to calculate P-values. 
+The most important output from our table is the F-statistic. The F-statistic measures the amount of variation in our data that came from differences between our treatment groups versus the amount of variation that came from differences within our treatment groups. From this F statistic we can create an f distribution that allows us to calculate P-values. 
 ```{r}
 # lets create the F distribution using the df function.
 # run help(df) and focus on the first 3 arguments. 
 
 # It works almost exactly like the dt function but with 2 inputs for degrees of freedom. 
 # df1 is the group degrees of freedom and df2 is for the error degrees of freedom. 
+#!!!!# make a note in the R-code to go to slide the slide
+#!!!!# the range of x-values should be 0 to 5. 
 x=
 fdistr=
 
-# Now lets plot the F distribution. 
+# Now lets plot the F distribution. #!!!!# put a hint to refer back to the t-distribution plotting stuff.
 
 # run this line of code to look at the rejection region
 polygon(c(x[x>=3.15], max(x), 3.15), c(fdistr[x>=3.15], 0, 0), col="red")
@@ -75,7 +77,7 @@ There are a large variety of different multiple comparison tests that can be per
 
 Many multiple comparisons in r utilize a function called pairwise.t.test. This function is used to perform multiple two-sample t-tests between all of the different sample groups, so it does that thing I told you never to do. Luckily, it has an option to adjust the P-values of these t-tests based on different multiple comparison methods. 
 ```{r}
-# try running help("pairwise.t.test")
+# try running help(pairwise.t.test)
 
 # note that rather than using a formula object, you just specify the two columns you are looking at in 
 # your dataframe using dataframe$column_name
@@ -83,6 +85,7 @@ Many multiple comparisons in r utilize a function called pairwise.t.test. This f
 #for educational purposes, lets do a pairwise t-test with NO P value adjustment whatsoever ("none"). 
 
 ```
+#!!!!# I would like a bit of explanation of bonf in here. there is nothing in the slides anymore. 
 ```{r}
 #now perform a pairwise t-test using the Bonferroni method ("bonf")
 
@@ -112,11 +115,12 @@ The Benjamini-Hochberg method is more of an algorithm than an equation. We are g
 
 ```{r}
 # We are going to need to load a package called dplyr for this. 
+#If you do not have the dplyr package, then please run install.packages("dplyr")
 library(dplyr)
 
 # We are going to create a set of P-values that we theoretically could have gotten from performing 10 
 # tests. 
-p_values=c(0.38,0.22,0.45,0.04,0.06,0.008,0.001,0.15,0.013,0.59)
+p_values=c(0.38,0.022,0.45,0.04,0.06,0.008,0.001,0.15,0.013,0.59)
 
 # then, the first step of the Benjamini Hochberg method is to order the P-values from largest to 
 # smallest. We are going to do this using the sort() function. Call this sorted vector p_sort
@@ -148,10 +152,11 @@ BH_df
 Now that we know what the BH test is doing, we can just get R to run it. 
 
 ```{r}
-#finally, let's perform a pairwise t-test using the bonferroni adjustment. 
-# we are going to go back to using the data from the three samples we made at the beginning of this 
-# workshop (the one we called data)
+#finally, let's perform a pairwise t-test using the Benjamini-Hochberg adjustment. 
+# we are going to go back to using the dataframe we made from the three samples we made at the beginning # of this workshop (the one we called data)
 
+```
 
-# compare this output to the output we got from the Bonferroni method. 
+```{r}
+# do the bonferroni adjustment one more time and compare it to the BH method.
 ```

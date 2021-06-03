@@ -33,7 +33,7 @@ print(sample.int(10,10,replace=TRUE))
 # found like this:
 ind=sample.int(1550,1550,replace=TRUE) 
 
-# or get R to get the size of the sample using num el
+# or get R to get the size of the sample using length
 ind=sample.int(length(dat),length(dat),replace=TRUE)
 
 # So to get our resample all we need to do is index dat with ind and assign
@@ -50,8 +50,7 @@ dat_RS=dat[ind]
 
 ```{r}
 # Use 2 inputs. 1. the data, can be called dat 2. the number of resamples, nresamps.
-# Store your resamples in a matrix as output, call it resamps_out.  Remember to
-# comment your code!!
+# Store your resamples in a matrix as output, call it resamps_out. 
 
 make_resamples = function(dat,nresamps){
 #make_samples function returns nresamps of data stored in dat
@@ -77,16 +76,18 @@ for (i in 1:nresamps) {
 # This function returns a 2 dimensional matrix of resamples. What is a 2 dimensional matrix? For our purposes it is a table. Just a table. Sounds fancy. Really boring. 
 
 ```{r}
-# use our function to do 10 resamples.Store the output in a variable called dat_RS. 
+# use our function to do 10 resamples. Store the output in a variable called dat_RS. 
 
 dat_RS=
 
-# take a look at the resamples to see how their histograms look 
-# do a loop and a subplot.
-
+# Let's look at a couple of our resamples. 
+# We can access a single resample by using notation like this dat_RS[ind,]
+#look at however many you want (at least 2)
+  
+  
 # Pretty similiar??  Should be...
 ```
-ok, now that we can generate lots of resamples let's look at the distribution of different means in our resamples.
+ok, now that we can generate lots of resamples let's look at the distribution of means in our resamples.
 ```{r}
 # let's get 2000 resamples. Store the output in dat_RS again.
 
@@ -100,14 +101,16 @@ avg_RS=apply(dat_RS,1,mean)
 # So now we have the mean for each resample.  plot the distribution of
 # that using hist again.
 
-# Btw, what was our actual sample mean? Use the mean() function. 
+# By the way, what was the mean of our original sample? Use the mean() function to calculate it.
 
-# it is the same of the mean of this histogram isn't it? 
+# Now, what was the mean of our distribution of resamples?
+
+#Do the two values look similar?
+
+
 ```
-Where do you expect this to fall on the histogram?  What shape should this
-distribution have? #!!!!# what does this mean? 
 
-What is this distribution?
+What is this distribution we just made distribution?
 
 It's the bootstrap distriubtion of the sample mean. It represents an estimation of the sampling 
 distribution. 
@@ -115,14 +118,17 @@ distribution.
 Let's try it again, this time using R's most popular bootstrapping package which is creatively named 
 boot. 
 ```{r}
-#Check the boot package doc using help("boot") There is a lot of information in this help file, but you 
-#should focus on the first 3 inputs. Use the function to find the means of 2000
-#resamples. store the resulting distribution in a variable called dist. 
-
+# first things first we need to load the boot package.
+# If you have not already installed the boot package, please install it by copying 
+# install.packages("boot") into the console. 
 library(boot)
 
-# The statistic input is not intuitive, so I have added in a function that is the proper input.
-samplemean <- function(data, i) {
+# Check the boot package doc using help("boot") There is a lot of information in this help file, but you 
+# should focus on the first 3 inputs. Use the function to find the means of 2000
+# resamples. the boot library is general and can derive any statistic you want from the data. This 
+# means you always need to derive a function, even if it is for something simple like the mean. We have 
+# created this for you. 
+samplemean = function(data, i) {
   d=data[i]
   return(mean(d))
 }
@@ -130,36 +136,47 @@ samplemean <- function(data, i) {
 # Run the boot function and store the results in a variable called output.  
 output = 
 
-# Save the "t" value of the output (the distribution) using output$t in a variable named dist
-dist = output$t
+# look up output in your global environment and click on it to open it in a new tab
+# Let's look through this together. You should see a lot of different results, but most 
+# of them are not that useful. What we are interested in is the actual bootstrap distribution
+# the boot function made. For some reason, this is called t (it has nothing to do with the t-stat) 
+# We are going to save this t section in a variable called dist using output$t
+dist = 
 ```
-Let's head back to the slides for now. 
-
-
 Now that we have the bootstrap distribution, we can use it to estimate all kinds of useful stuff. 
 
-How about the standard error?
+Let's head back to the slides for now to see what we can use the distribution for. 
 
+Standard error
 ```{r}
-# Calculate standard error:
-# using our bootstrap distribution, call it avg_RS_se
+# Calculate standard error using the bootstrap distribution from boot, call it dist_se.
 # remember, the standard deviation function in R is sd()
-avg_RS_se=
-# Using the bootstrap distribution from boot, call it dist_se. 
 dist_se=
+
+#print out your standard error
+
 ```
 
-And confidence intervals?
-
+95% Confidence Intervals
 ```{r}
 # a few different options here: option 1.  My sampling distribution looks
 # Normal.  Then you can use critical t values and all is well.
 
-# traditional t-confidence interval is statistic +/- t*SE_stat 
-# set alpha to equal 0.05
-# calculate the critical t-value (t*) using the qt function. 
+# traditional t-confidence interval is statistic +/- t*SE_stat. 
+# let's get everything we need to estimate the confidence intervals. first set alpha to equal 0.05
 alpha =
+  
+# Then, calculate the critical t-value (t*) using the qt function. type help(qt). The two arguments we 
+# are looking at are p and df. p is the probability we are looking for, and df is the degrees of freedom 
+# which is equal to the number of resamples - 1
 tcrit =
+  
+# now calculate the t-confidence intervals using the equation. 
+lower_bound=
+upper_bound=
+
+#print out the confidence interval. 
+  
 
 # Let's also look at the percentile method. For this we are going to use the boot.ci part of the boot 
 # package. run help(boot.ci) and focus on the first 3 arguments. 
@@ -168,10 +185,15 @@ tcrit =
 # use print() to display it. 
 per_ci=
 
-# Does it make sense?  Figure out how many elements in our bootstrap
-# distribution fall within these limits.  Use numel and find perhaps.
+# Does it make sense?  Let's figure out how many elements in our bootstrap
+# distribution fall within these limits using length() and which().
+#This command will tell us the numebr of datapoints which are within the confidence interval
+# we will call this n.
+n=length(which(dist>per_ci$percent[,4] & dist < per_ci$percent[,5]))
+print(n)
 
-print(length(which(dist>per_ci$percent[,4] & dist < per_ci$percent[,5]))/length(dist))
+# let's see what the ratio is of n to the total number of datapoints in our resamples.
+n/length(dist)
 
 # Nice.  Willing to except a little descrepancy here since the bootci is
 # calculating a new bootstrap distribution compared to the one we used for
@@ -180,7 +202,12 @@ print(length(which(dist>per_ci$percent[,4] & dist < per_ci$percent[,5]))/length(
 # What if our bootstrap distribution was not normal? use the bias corrected accelerated confidence 
 # interval.again, use boot.ci and change the type to bca. save the output in a variable called bca_ci
 bca_ci=
+  
+# print bca_ci. 
+  
 ```
+Permutation testing.
+
 Before we get into Permutation testing, I am going to remake my resampling function so that we can get resamples with a specific number of data points. I am going to call it make_resamples2
 
 ```{r}
@@ -206,8 +233,7 @@ resamps_out=matrix(nrow=nresamps,ncol=nsamps)
     
     for (i in 1:nresamps) {
     #generate random numbers for resample
-    ind=sample.int(length(dat),nsamps,replace=FALSE) #!!!# Wait, are we doing replacement here? 
-    # index data with new indices
+    ind=sample.int(length(dat),nsamps,replace=FALSE)
     dat_RS=dat[ind]
     # store in output matrix
     resamps_out[i,]=dat_RS
@@ -221,8 +247,8 @@ Permutation testing.
 
 ```{r}
 #Let's make a couple of normal samples.  Call them x1 and x2.
-# give x1 a mean of 1 and a std of 2 and 27 data points
-# give x2 a mean of 2 and a std of 3 and 47 data points
+# give x1 a mean of 2 and a sd of 2 and 27 data points
+# give x2 a mean of 1 and a sd of 3 and 47 data points
 # recall the R function rnorm gives random numbers taken from a
 # normal distribution.
 
@@ -236,8 +262,8 @@ x2=
 
 
 ```{r}
-# and we want to look at the difference of the means? So calculate the
-# observed difference from the samples.  Store in x_diff_obs.
+# Let's say our alternate hypothesis is that mean of x1 > mean of x2
+# The first thing we need to do is take the difference of the two means. Let's do x1-x2, which means that # are alternative hypothesis is that the difference will be positive  Store in x_diff_obs.
 
 x_diff_obs=
 
@@ -250,34 +276,31 @@ x_diff_obs=
 
 x=
 
-# Check it by making a single resample. For x1 the extra argument should be
-# 27 (length(x1)) & it should be 47 (length(x2)) for x2
-# Call your resamples x1_RS and x2_RS
+# let's make 5000 resamples from our combined sample and call these new resamples x1_RS and x2_RS.
+# For x1 the resample size should be 27 (length(x1)) & it should be 47 (length(x2)) for x2
 
 x1_RS=
 x2_RS=
 
-# now make say 5000 resamples.
-# Again, call your resamples x1_RS and x2_RS
-
-x1_RS=
-x2_RS=
-
-# find the means and subtract them, take the mean on the data points.
-# You are going to need to use the apply function to take the mean of each row. 
+# find the means and subtract them, take the mean of the data points.
+# You are going to need to use the apply() function to take the mean of each row.
+# You will be using the apply function in a way that is very similar to our first use of it. 
 # Save the means in variables called x1_RS_avg and x2_RS_avg.
   
 x1_RS_avg=
 x2_RS_avg=
 
-# Calculate the difference between all of our means. #!!!# does the order matter?
+# Calculate the difference between all of our means. Make sure to use the same order. 
 # Save the output in a varibale called x_diff.
 x_diff=
 
 # make a histogram to have a look at the distribution
+  
+# Where is our original observed difference (x_diff_obs) going to fall on this distribution? what do you 
+# think will be the result of the test?
 
 # now figure out our p val.
-# Assuming our alternate hypothesis is that mean of x2 > mean of x1
+# Assuming our alternate hypothesis is that mean of x1 > mean of x2
 
 print(length(which(x_diff >= x_diff_obs))/length(x_diff))
 

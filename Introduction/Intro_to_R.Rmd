@@ -1,7 +1,8 @@
 Things I wish to include: 
 An explanation of the basic layout. 
-An explanation of the basic commands (things like how to run a line of code)
 An explanation of the R markdown format
+An explanation of comments.
+An explanation of the basic commands (things like how to run a line of code)
 An explanation of how to set a variable. 
 An explanation of using base functions
 An example of loading a package and using a package function. 
@@ -11,3 +12,43 @@ An example plot. (show off severeal of the most basic plots and then show how yo
 par function to make subplots. )
 A VERY basic example of working with dataframes (stuff like what does dataframe$column_name do.)
 A final not on the fact that there is often more than 1 way to do things in R. 
+
+# Welcome to Rstudio! 
+Rstudio is a great place for organizing your work in R and integrating other programs into your workflow. Basically all of the work you complete in R is going to be in Rstudio. Let's get familiar with the layout of Rstudio.
+
+# There are 4 windows in R studio: 
+- The upper left window (the one you are reading right now) Is the script section. This section allows you to edit and save R-scripts that you can then run right in R-studio. 
+
+- The lower left window is the console section. This is the part of R-studio that is actuallly running R. You can actually type commands directly into the window if you just want to run something quickly, but we will mostly be typing stuff into scripts and running from there.  
+
+- The upper right window has several tabs, but for today we will just focus on the environment tab. This is where you can view all of the stuff you save into your R session such as variables and dataframes (more on those later).
+
+- The lower right window contains several useful tabs. You can look through and open files with file, look at any plots you make, see what R packages you have loaded, and view help files. 
+
+# What is an R-markdown file?
+The script you currently have loaded is a special kind of R script called a markdown file. R-markdown is a powerful tool for integrating R-code into documents and websites, but for now we are just using it as a convenient scripting format. 
+Everything you have been reading up to this point has been part of the markdown section of the Rmarkdown file. Now lets actually create a coding section. We are going to create a block of code using three apostrophes and {r}
+```{r}
+# everything in this grey box can be run by the R coding language. 
+# If we want to put any notes into these coding blocks, we need to turn them into comments 
+# by starting the line with a hashtag#. This will tell R to ignore whatever else is in the line. 
+
+# Let's actually make something we can run now and run it by hitting the green arrow at the top of the 
+# block
+2+2
+
+# do you see the output below you? 
+```
+
+
+
+
+
+
+
+
+
+
+
+
+

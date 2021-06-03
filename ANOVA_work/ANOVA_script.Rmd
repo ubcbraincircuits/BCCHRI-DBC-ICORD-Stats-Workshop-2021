@@ -74,10 +74,10 @@ plot(x,fdistr,type="l",
      ylab="Probability Density",
      main =" F distribution with 2 and 57 degrees of freedom (df)")
 
-# run this line of code to look at the rejection region
-polygon(c(x[x>=3.15], max(x), 3.15), c(fdistr[x>=3.15], 0, 0), col="red")
+# append this line of code to the plot function to look at the rejection region
+# +polygon(c(x[x>=3.15], max(x), 3.15), c(fdistr[x>=3.15], 0, 0), col="red")"
 
-# Scroll back up to our table, where does your F value fall on this graph? does it make sense that you were/were'nt able to reject the null?
+# Scroll back up to our ANOVA table, where does your F value fall on this graph? does it make sense that you were/were'nt able to reject the null?
 ```
 Multiple Comparisons
 
@@ -85,8 +85,8 @@ There are a large variety of different multiple comparison tests that can be per
 
 Many multiple comparisons in r utilize a function called pairwise.t.test. This function is used to perform multiple two-sample t-tests between all of the different sample groups, so it does that thing I told you never to do. Luckily, it has an option to adjust the P-values of these t-tests based on different multiple comparison methods. 
 ```{r}
-# try running help("pairwise.t.test")
-help("pairwise.t.test")
+# try running help(pairwise.t.test)
+help(pairwise.t.test)
 # note that rather than using a formula object, you just specify the two columns you are looking at in 
 # your dataframe. 
 

@@ -1,3 +1,10 @@
+Load up dplyr
+```{r}
+# We are going to need to load a package called dplyr for this. 
+#If you do not have the dplyr package, then please run install.packages("dplyr")
+library(dplyr)
+```
+
 Generate some data
 Let's generate some data using three different calls to the rnorm function to represent samples from three different populations.
 ```{r}
@@ -18,11 +25,19 @@ The ANOVA function is a little bit different from the other functions in that it
 # let's call our new dataframe data. 
 data = data.frame(cbind(x1,x2,x3))
 
-# Then we are going to reorganize it with stack(). 
+# Take a look at the dataframe we just made. Right now we have each group organized into a different 
+# column. This format is easy for a person to understand but hard for a computer to understand. It is not
+# tidy. We need to organize it so that the all of the sample values are in the same column with another 
+# column that specifies which group each value belongs to. We can do this very easily with the stack() 
+# function, which automatically organizes our data this way. 
 data = stack(data)
-#be sure to take a second to look at your dataframe. Do you understand its stucture? 
 
-# now are data is all set for ANOVA. 
+# The last thing we are going to do is use dplyr's rename() function to change the column name "ind" to 
+# "group"
+data = rename(data, group=ind)
+
+# look at our reorganized dataframe and think about how it has changed. 
+# now our data is all set for ANOVA!
 ```
 
 ANOVA
@@ -42,12 +57,12 @@ help(lm)
 # Essentially, when you type A~B you are saying thet you want to test if variable A is dependent on B.
 # The first term is the response variable in your data and the second is the explanatory variable. 
 # The specifics of what a formula object actually is in R are complicated and beyond this workshop. 
-# for more details, look up ?formula 
+# if you want more details, look up ?formula after the workshop.  
 
 # ok, now we can actually use lm() by specifying the formula and data arguments. run lm and save the 
 # output in a variable named Av_object
-# Hint: what are our response and explanatory variables? 
-Av_object <- lm(values~ind,data=data) 
+# Hint: what are our response and explanatory variables? specify the variables using the column names
+Av_object <- lm(values~group,data=data) 
 
 # Now we are ready to actually run the ANOVA test using the anova() function. 
 anova(Av_object)
@@ -62,11 +77,13 @@ help(df)
 
 # It works almost exactly like the dt function but with 2 inputs for degrees of freedom. 
 # df1 is the group degrees of freedom and df2 is for the error degrees of freedom. 
-# create a sequence using seq() and call it x. save you f distribution as a variable called fdist. 
+# go to slide 8 if you need a refresher on how to calculate degrees of freedom. 
+# create a sequence  between 0 and 5 using seq() and call it x. 
+# save you f distribution as a variable called fdist. 
 x=seq(0,6,by=0.001)
 fdistr=df(x,df1 = 2, df2 = 57)
 
-# Now lets plot the F distribution. 
+# Now lets plot the F distribution. Refer back to how we plotted the t-distribution. 
 plot(x,fdistr,type="l",
      xlim = c(0,5), 
      ylim = c(0,1),
@@ -91,14 +108,17 @@ help(pairwise.t.test)
 # your dataframe. 
 
 # for educational purposes, lets do a pairwise t-test with NO P value adjustment whatsoever ("none"). 
-pairwise.t.test(data$values, data$ind, p.adj= "none", alternative="two.sided")
+pairwise.t.test(data$values, data$group, p.adj= "none", alternative="two.sided")
 ```
+Controlling FWER: The Bonferroni method. 
+
+The Bonferroni method is probably the simplest multiple comparison technique. In a nutshell, the bonferroni method is done by just taking taking the alpha value we are using (usually 0.05) and dividing it by the number of tests we are doing. This makes it harder and harder to find significant results as the number of tests we are doing increases. 
 ```{r}
 # now perform a pairwise t-test using the Bonferroni method ("bonf")
-pairwise.t.test(data$values, data$ind, p.adj = "bonf",alternative="two.sided")
-# Can you see the difference between the two P-values? 
+pairwise.t.test(data$values, data$group, p.adj = "bonf",alternative="two.sided")
+# Can you see the difference between the un-adjusted P-values and the adjusted P-values? 
+# they have been multiplied by the number of tests you did (3)!
 ```
-
 Let's look at what is actually happening when we make a bonferroni adjustment. We are going to see what happens to the rejection region of our t-distribution when we conduct 50 seperate tests (all with a sample size of 20) and make the bonferroni adjustment. 
 ```{r}
 # create a t-distribution just like what we did in the t-test section.
@@ -124,9 +144,6 @@ The Benjamini-Hochberg method is more of an algorithm than an equation. We are g
 
 
 ```{r}
-# We are going to need to load a package called dplyr for this. 
-library(dplyr)
-
 # We are going to create a set of P-values that we theoretically could have gotten from performing 10 
 # tests. 
 p_values=c(0.38,0.022,0.45,0.04,0.06,0.008,0.001,0.15,0.013,0.59)
@@ -151,8 +168,8 @@ BH_df = data.frame(cbind(p_sort,rank))
 # now, we will use the mutate function to create a new column with the critical values for each test.
 # The mutate function takes the values from other columns and uses an equation to calculate the values 
 # for a new column. 
-# the mutate function is in the form mutate(dataframe, new_column name = equation)
-BH_df = mutate(df, critical_val = rank/10*0.05)
+# the mutate function is in the form mutate(dataframe, new_column_name = equation)
+BH_df = mutate(BH_df, critical_val = rank/10*0.05)
 BH_df
 
 # Let's look at our dataframe. 
@@ -164,7 +181,11 @@ Now that we know what the test is doing, we can finally run it in R.
 #finally, let's perform a pairwise t-test using the bonferroni adjustment. 
 # we are going to go back to using the data from the three samples we made at the beginning of this 
 # workshop (the one we called data)
-pairwise.t.test(data$values, data$ind, p.adj = "BH",alternative="two.sided")
+pairwise.t.test(data$values, data$group, p.adj = "BH",alternative="two.sided")
 
 # compare this output to the output we got from the Bonferroni method. 
+```
+```{r}
+# do the bonferroni adjustment one more time and compare it to the BH method.
+pairwise.t.test(data$values, data$group, p.adj = "bonf",alternative="two.sided")
 ```

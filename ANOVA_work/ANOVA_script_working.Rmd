@@ -1,3 +1,10 @@
+Load up dplyr
+```{r}
+# We are going to need to load a package called dplyr for this. 
+#If you do not have the dplyr package, then please run install.packages("dplyr")
+library(dplyr)
+```
+
 Generate some data
 Let's generate some data using three different calls to the rnorm function to represent samples from three different populations.
 ```{r}
@@ -18,10 +25,19 @@ The ANOVA function is a little bit different from the other functions in that it
 # let's call our new dataframe data. 
 data = 
 
-# Then we are going to reorganize it with stack(). #!!!!# Put more of a description of what stack does in normal words. Maybe even put a mini table in the comments. 
+# Take a look at the dataframe we just made. Right now we have each group organized into a different 
+# column. This format is easy for a person to understand but hard for a computer to understand. It is not
+# tidy. We need to organize it so that the all of the sample values are in the same column with another 
+# column that specifies which group each value belongs to. We can do this very easily with the stack() 
+# function, which automatically organizes our data this way. 
 data = 
+# look at our reorganized dataframe and think about how it has changed. 
+  
+# The last thing we are going to do is use dplyr's rename() function to change the column name "ind" to 
+# "group"
+data = rename(data, group=ind)
 
-# now our data is all set for ANOVA.
+# now our data is all set for ANOVA!
 ```
 
 ANOVA
@@ -35,17 +51,17 @@ we are going to learn ANOVA in a kind of backwards way. We are going to start by
 #run help(lm). Focus on the first two arguments. 
 
 # wait, what is a formula class object? 
-# Formula class objects are specified using a tilde (~) and are used to specify a relationship between two
-# vectors.
+# Formula class objects are specified using a tilde (~) and are used to specify a relationship between 
+# two vectors.
 # Essentially, when you type A~B you are saying that you want to test if variable A is dependent on B.
 # The first term is the response variable in your data and the second is the explanatory variable. 
 # The specifics of what a formula object actually is in R are complicated and beyond this workshop. 
-# for more details, look up ?formula 
+# if you want more details, look up ?formula after the workshop.  
 
 # ok, now we can actually use lm() by specifying the formula and data arguments. run lm and save the 
 # output in a variable named Av_object
-# Hint: what are our response and explanatory variables? 
-Av_object = #!!!!# maybe rename ind to groups again, and maybe just specify that we use the column names in the function object. 
+# Hint: what are our response and explanatory variables? specify the variables using the column names
+Av_object =
 
 # Now we are ready to actually run the ANOVA test using the anova() function. 
 
@@ -59,12 +75,13 @@ The most important output from our table is the F-statistic. The F-statistic mea
 
 # It works almost exactly like the dt function but with 2 inputs for degrees of freedom. 
 # df1 is the group degrees of freedom and df2 is for the error degrees of freedom. 
-#!!!!# make a note in the R-code to go to slide the slide
-#!!!!# the range of x-values should be 0 to 5. 
+# go to slide 8 if you need a refresher on how to calculate degrees of freedom. 
+# create a sequence  between 0 and 5 using seq() and call it x. 
+# save you f distribution as a variable called fdist. 
 x=
 fdistr=
 
-# Now lets plot the F distribution. #!!!!# put a hint to refer back to the t-distribution plotting stuff.
+# Now lets plot the F distribution. Refer back to how we plotted the t-distribution. 
 
 # run this line of code to look at the rejection region
 polygon(c(x[x>=3.15], max(x), 3.15), c(fdistr[x>=3.15], 0, 0), col="red")
@@ -85,11 +102,14 @@ Many multiple comparisons in r utilize a function called pairwise.t.test. This f
 #for educational purposes, lets do a pairwise t-test with NO P value adjustment whatsoever ("none"). 
 
 ```
-#!!!!# I would like a bit of explanation of bonf in here. there is nothing in the slides anymore. 
-```{r}
-#now perform a pairwise t-test using the Bonferroni method ("bonf")
+Controlling FWER: The Bonferroni method. 
 
-# Can you see the difference between the two P-values? 
+The Bonferroni method is probably the simplest multiple comparison technique. In a nutshell, the bonferroni method is done by just taking taking the alpha value we are using (usually 0.05) and dividing it by the number of tests we are doing. This makes it harder and harder to find significant results as the number of tests we are doing increases. 
+```{r}
+#perform a pairwise t-test using the Bonferroni method ("bonf")
+
+# Can you see the difference between the un-adjusted P-values and the adjusted P-values? 
+# they have been multiplied by the number of tests you did (3)!
 ```
 
 Let's look at what is actually happening when we make a bonferroni adjustment. We are going to see what happens to the rejection region of our t-distribution when we conduct 50 seperate tests (all with a sample size of 20) and make the bonferroni adjustment. 
@@ -114,10 +134,6 @@ The Benjamini-Hochberg method is more of an algorithm than an equation. We are g
 
 
 ```{r}
-# We are going to need to load a package called dplyr for this. 
-#If you do not have the dplyr package, then please run install.packages("dplyr")
-library(dplyr)
-
 # We are going to create a set of P-values that we theoretically could have gotten from performing 10 
 # tests. 
 p_values=c(0.38,0.022,0.45,0.04,0.06,0.008,0.001,0.15,0.013,0.59)
@@ -142,7 +158,7 @@ BH_df =
 # now, we will use the mutate function to create a new column with the critical values for each test.
 # The mutate function takes the values from other columns and uses an equation to calculate the values 
 # for a new column. 
-# the mutate function is in the form mutate(dataframe, new_column name = equation)
+# the mutate function is in the form mutate(dataframe, new_column_name = equation)
 BH_df = 
 BH_df
 

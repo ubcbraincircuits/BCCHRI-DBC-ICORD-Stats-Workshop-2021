@@ -1,3 +1,12 @@
+Load in the boot package
+```{r}
+# First things first we need to load the boot package.
+# If you have not already installed the boot package, please install it by copying 
+# install.packages("boot") into the console. 
+library(boot)
+# we will use this package extensively later. 
+```
+
 load the distribution
 
 ```{r}
@@ -72,8 +81,8 @@ for (i in 1:nresamps) {
     return(resamps_out)
 }
 ```
-
 # This function returns a 2 dimensional matrix of resamples. What is a 2 dimensional matrix? For our purposes it is a table. Just a table. Sounds fancy. Really boring. 
+
 ```{r}
 # Use our function to do 10 resamples. Store the output in a variable called dat_RS. 
 dat_RS =
@@ -112,16 +121,12 @@ distribution.
 Let's try it again, this time using R's most popular bootstrapping package which is creatively named 
 boot. 
 ```{r}
-# First things first we need to load the boot package.
-# If you have not already installed the boot package, please install it by copying 
-# install.packages("boot") into the console. 
-library(boot)
-
 # Check the boot package doc using help("boot") There is a lot of information in this help file, but you 
-# should focus on the first 3 inputs. Use the function to find the means of 2000
-# resamples. The boot library is general and can derive any statistic you want from the data. This 
-# means you always need to derive a function, even if it is for something simple like the mean. We have 
-# created this function for you. 
+# should focus on the first 3 inputs. 
+
+# Use the function to find the means of 2000 resamples. The boot library is general and can derive any 
+# statistic you want from the data. This means you always need to derive a function, even if it is for 
+# something simple like the mean. We have created this function for you. 
 samplemean = function(data, i) {
   d=data[i]
   return(mean(d))
@@ -138,8 +143,7 @@ output =
 dist = 
 ```
 Now that we have the bootstrap distribution, we can use it to estimate all kinds of useful stuff. 
-
-Let's head back to the slides for now to see what we can use the distribution for. 
+# Let's head back to the slides for now to see what we can use the distribution for. 
 
 # Standard error
 ```{r}
@@ -151,7 +155,7 @@ dist_se =
 
 ```
 
-95% Confidence Intervals
+# 95% Confidence Intervals
 ```{r}
 # A few different options here: option 1. My sampling distribution looks
 # Normal. Then you can use critical t values and all is well.
@@ -173,7 +177,8 @@ upper_bound =
   
 
 # Let's also look at the percentile method. For this we are going to use the boot.ci part of the boot 
-# package. Run help(boot.ci) and focus on the first 3 arguments. 
+# package. Run help(boot.ci) and focus on the first 3 arguments. Note that the argument type specifies 
+# which type of confidence interval will be calculated. 
 
 # Create a percentile bootstrap confidence interval. Store the output in a variable called per_ci and 
 # use print() to display it. 
@@ -200,8 +205,9 @@ bca_ci =
 # Print bca_ci. 
   
 ```
+# Let's head back to the slides now. 
 
-#Permutation testing.
+# Permutation testing.
 Before we get into Permutation testing, I am going to remake my resampling function so that we can get resamples with a specific number of data points. I am going to call it make_resamples2
 
 ```{r}
@@ -237,13 +243,13 @@ resamps_out = matrix(nrow = nresamps,ncol = nsamps)
 
 ```
 
-Permutation testing.
+Ok, now let's actually do the Permutation test.
 
 ```{r}
 # Let's make a couple of normal samples.  Call them x1 and x2.
 # Give x1 a mean of 2 and a sd of 2 and 27 data points.
 # Give x2 a mean of 1 and a sd of 3 and 47 data points.
-# Recall the R function rnorm gives random numbers taken from a
+# Recall the R function rnorm() gives random numbers taken from a
 # normal distribution.
 
 x1 =
@@ -262,9 +268,9 @@ x2 =
 x_diff_obs =
 
 # Ok our null hypothesis is that there is no difference between the means
-# of the two samples.  So we can build a distribution by resampling as if
-# this were the case.  Call it the permutation distribution to distinguish 
-# it from the bootstrap.  We have a total of 27 + 47=74 observations.  Let's put
+# of the two samples. So we can build a distribution by resampling as if
+# this were the case. Call it the permutation distribution to distinguish 
+# it from the bootstrap. We have a total of 27 + 47=74 observations.  Let's put
 # them all together in a big vector by concatenation, call it x.
 # Note: you can concatenate in R using the c() function. 
 

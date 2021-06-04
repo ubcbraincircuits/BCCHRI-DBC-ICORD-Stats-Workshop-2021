@@ -13,7 +13,7 @@ plot(x,y,type = 'l', main = "Example of a sampling distribution", ylab = 'Probab
 # Now let's draw a single sample from an identical sampling distribution using the rnorm function.
 # If you are not familiar with rnorm, try running help(rnorm) and see what comes up. The mean of our 
 # sample will be 10 and the standard deviation will be 2.5. Store this sample in a
-# variable called sample
+# variable called sample.
 sample = 
 
 #Now let's draw 5000 samples from an identical distribution and see what they look like using the 
@@ -62,7 +62,7 @@ sample =
 # the test?
 obs_t = (mean(sample)-10)/(sd(sample)/sqrt(length(sample)))
 
-# R's t-test function is called t.test. run help(t.test) to get a feel for the function 
+# R's t-test function is called t.test. run help(t.test) to get a feel for the function.
 
 
 # do the t.test:
@@ -194,4 +194,6 @@ plot(seq(-5,5,by = .1),tdistr,type = "l",main = "t distribution, paired test exa
 # What's our Ha?  Let's say that it is mean(x)<mean(y), so we need to look at a
 # rejection region in the left tail of the distribution.
 # Ok, do the test. It's t.test again but this time we are going to specify that they are paired. 
+
+
 ```

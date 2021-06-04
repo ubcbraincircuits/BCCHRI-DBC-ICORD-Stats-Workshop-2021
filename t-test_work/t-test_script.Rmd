@@ -1,47 +1,47 @@
-Sampling distributions. 
-The sampling distribution of a statistic represents all of the different different sample statistics we could get when we draw a random sample from a population. 
+# Sampling distributions. 
+The sampling distribution of a statistic represents all of the different sample statistics we could get when we draw a random sample from a population. 
 ```{r}
-# lets create a super basic normal distribution to represent a sampling distribution.
+# let's create a super basic normal distribution to represent a sampling distribution.
 # the mean of our distribution will be 10 and the standard deviation will be 2.5. 
-x <- seq(0, 20, by = .1)
-y <- dnorm(x, mean = 10, sd = 2.5)
+x = seq(0, 20, by = .1)
+y = dnorm(x, mean = 10, sd = 2.5)
 
-# now we plot the distribution using plot(). 
-plot(x,y,type='l', main="Example of a sampling distribution", ylab='Probability',
-     xlab='Sample Statistic')
+# Now we plot the distribution using plot().  
+plot(x,y,type = 'l', main = "Example of a sampling distribution", ylab = 'Probability',
+     xlab = 'Sample Statistic')
 
-# Now lets draw a single sample from an identical sampling distribution using the rnorm function
+# Now let's draw a single sample from an identical sampling distribution using the rnorm function.
 # If you are not familiar with rnorm, try running help(rnorm) and see what comes up. The mean of our 
-# sample will be 10 and the standard deviation will be 2.5 Store this sample in
-# a variable called sample
+# sample will be 10 and the standard deviation will be 2.5. Store this sample in a
+# variable called sample.
 help(rnorm)
-sample = rnorm(1, mean=10, sd=2.5)
+sample = rnorm(1, mean = 10, sd = 2.5)
 print(x)
 
-#Now lets draw 5000 samples from an idential distribution and see what they look like using the 
-#hist() function. Store these samples in a variable called "sample" again. Try help(hist) if stuck.
-sample = rnorm(5000, mean=10, sd=2.5)
-hist(sample, breaks=30, xlab="Histogram of Samples")
+#Now let's draw 5000 samples from an identical distribution and see what they look like using the 
+#hist() function. Store these samples in a variable called sample again. Try help(hist) if stuck.
+sample = rnorm(5000, mean = 10, sd = 2.5)
+hist(sample, breaks = 30, xlab = "Histogram of Samples")
 ```
 This shape probably looks familiar to most of you. This is a normal distribution. It is going to come up a lot for reasons we are about to go over. Let's go back to the slides now. 
 
 
 The t statistic and the t distribution. 
 ```{r}
-#What does our t distribution look like?
-x=seq(-5,5,by=0.001)
-tdistr=dt(x,17)
-plot(x,tdistr,type="l",main="t distribution",xlab="t",ylab="Porobability Density") 
+# What does our t distribution look like?
+x = seq(-5,5,by = 0.001)
+tdistr = dt(x,17)
+plot(x,tdistr,type = "l",main = "t distribution",xlab = "t",ylab = "Porobability Density") 
 
-# Look at the plot, and then append the code below to your plot to create a rejection region. 
-# + polygon(c(x[x>=1.73], max(x), 1.73), c(tdistr[x>=1.73], 0, 0), col="red") #
+# Look at the plot and then append the code below to your plot to create a rejection region. 
+# + polygon(c(x[x> = 1.73], max(x), 1.73), c(tdistr[x> = 1.73], 0, 0), col = "red") #
 
 
 ```
 What we just did is sort of like a manual version of conducting a t-test. R has a whole bunch of built in machinery that makes doing t-tests much simpler. Let's actually do a t-test now. 
 
-Let's say the test we are trying to accomplish it to see if the data is
-consistent with a population mean of 10.  This will be our H0: mu=10.
+Let's say the test we are trying to accomplish is to see if the data is
+consistent with a population mean of 10.  This will be our H0: mu = 10.
 
 What's our Ha?  
   
@@ -49,54 +49,54 @@ Let's say the alternative is that mu > 10, This means we will be looking
 for our test statistic in a rejection region which is out to the right
 side of the distribution, so we will need to set the greater than option.
 
-One Sample T-test. 
+# One Sample T-test. 
 
 ```{r}
 # First set the sample size we are going to use when we draw our sample. Let's do a sample size of 20 and
 # call the variable n
-n=20
+n = 20
 
 # Create a sample to use via the rnorm command. Call this variable "sample".
 # Give it a mean of 10 and a standard deviation of 2.5
 # plot it in a histogram using hist()
-sample=rnorm(n, mean=10, sd=2.5)
+sample = rnorm(n, mean = 10, sd = 2.5)
 
 hist(sample)
 
-#Quickly remake the t distribution, by copying the code we used last time. 
-x=seq(-5,5,by=0.001)
-tdistr=dt(x,n-1)
-plot(x,tdistr,type="l",main="t distribution",xlab="t",ylab="Porobability Density")
+# Quickly remake the t distribution, by copying the code we used last time. 
+x = seq(-5,5,by = 0.001)
+tdistr = dt(x,n-1)
+plot(x,tdistr,type = "l",main = "t distribution",xlab = "t",ylab = "Porobability Density")
 
 # what's our t value and where is it on the distribution?  What do you predict for the result of
 # the test?
-obs_t=(mean(sample)-10)/(sd(sample)/sqrt(length(sample)))
+obs_t = (mean(sample)-10)/(sd(sample)/sqrt(length(sample)))
 
-# R's t test function is called t.test. run help(t.test) to get a feel for the function 
+# R's t-test function is called t.test. run help(t.test) to get a feel for the function.
 
 # do the t.test:
-# remember, the mean of our null is 10 and we want to a right one-sdided (greater than) test
-t.test(sample,mu=10,alternative="g")
+# remember, the mean of our null is 10 and we want to do a right, one-sided test (greater than).
+t.test(sample,mu = 10,alternative="g")
 
 # There are a lot of outputs, but for our purposes we want to focus on 
 # the p-value. 
 ```
-just for funsies:  How often do we make a type I error?  It's
-easy to estimate for type I here.  We know mu.  Above. It's 10.
+# just for funsies:  How often do we make a type I error?  
+It's easy to estimate for type I here.  We know mu.  Above. It's 10.
 
 So what's a type I error again?  H0 rejected when it's true.
 In our case H0 is true.
-let's generate a sample and do the test lot's of times to see how often
+let's generate a sample and do the test lots of times to see how often
 we reject H0.
 ```{r}
-N_iter=20000
-h_out=0
-alpha=0.05
+N_iter = 20000
+h_out = 0
+alpha = 0.05
 for (i in 1:N_iter){
-  x=rnorm(n, mean=10, sd=2.5)
-  p=t.test(x,mu=10,alternative="g")[["p.value"]]
+  x = rnorm(n, mean = 10, sd = 2.5)
+  p=t.test(x,mu = 10,alternative = "g")[["p.value"]]
   if (p < alpha){
-  h_out=h_out+1
+  h_out = h_out+1
   }
   }
 # So what's the rate of type I error?
@@ -111,43 +111,43 @@ h_out/N_iter
 ```
 Two sample T-test.
 ```{r}
-# first make 2 large samples using rnorm again. lets say 200 and 400 samples each. 
+# First make 2 large samples using rnorm again. let's say 200 and 400 samples each. 
 # Call the variables x and y.The mean of x will be 10 and the mean of y will be 11. 
-# set the standard deviation to 2.5 
-x=rnorm(170, mean=10, sd=2.5)
-y=rnorm(340, mean=11, sd=2.5)
+# Set the standard deviation to 2.5 
+x = rnorm(170, mean = 10, sd = 2.5)
+y = rnorm(340, mean = 11, sd = 2.5)
 
 # Look at them using hist().
 
 hist(x)
 hist(y)
 
-# very cute, but let's reduce the number of data points to make this a
-# little more messy, I mean realistic. Lets do sample sizes of x = 20 and y = 40 (same sd).
+# Very cute, but let's reduce the number of data points to make this a
+# little more messy, I mean realistic. Let's do sample sizes of x = 20 and y = 40 (same sd).
 
-x=rnorm(20, mean=10, sd= 2.5)
-y=rnorm(40, mean=11, sd=2.5)
+x = rnorm(20, mean = 10, sd = 2.5)
+y = rnorm(40, mean = 11, sd = 2.5)
 
-# Look at them.
+# Look at them using hist().
 
 hist(x)
 hist(y)
 ```
 
 ```{r}
-# Here I made the variances equal.  In practice if we are using a two
+# Here I made the variances equal. In practice if we are using a two
 # sample t test and allowing ourselves to assume equal variances then we
-# compute what is called the pooled standard deviation.  
+# compute what is called the pooled standard deviation. 
 
-sp=((length(x)-1)*sd(x)^2+(length(y)-1)*sd(y)^2)/(length(x)+length(y)-2)
-sp=sqrt(sp)
+sp = ((length(x)-1)*sd(x)^2+(length(y)-1)*sd(y)^2)/(length(x)+length(y)-2)
+sp = sqrt(sp)
 
-# and then we need to think about our H0 for a moment.
+# Then we need to think about our H0 for a moment.
 
-# let's say our H0 is that the population means are equal.  ie mu1=mu2.  So
-# we can calculate our t statistic as follows:
+# Let's say our H0 is that the population means are equal.ie mean(x)=mean(y).
+# So we can calculate our t statistic as follows:
   
-obs_t=(mean(x)-mean(y))/sqrt((sp^2)/length(x)+(sp^2)/length(y))
+obs_t = (mean(x)-mean(y))/sqrt((sp^2)/length(x)+(sp^2)/length(y))
 
 # Now we need to think about our Ha.  Let's say we thought it might be the
 # case that mean(x) < mean(y), That means our t stat would be out there in the left
@@ -156,62 +156,59 @@ obs_t=(mean(x)-mean(y))/sqrt((sp^2)/length(x)+(sp^2)/length(y))
 # mean(y) was 1000.  If the samples were large and xbar ~mean(x) and ybar ~mean(y) then
 # tstat would be large and negative! This means to the left.
 
-# ok so what does our t distribution look like?  Where does our observed
+# Ok so what does our t distribution look like?  Where does our observed
 # value of t land?  What does that imply for our testing?
 
-tdistr=dt(seq(-5,5,by=.1),length(x)+length(y)-2)
-plot(seq(-5,5,by=.1),tdistr,type="l",main="t distribution, 2 samp test example",xlab="",ylab="")
+tdistr = dt(seq(-5,5,by = .1),length(x)+length(y)-2)
+plot(seq(-5,5,by=.1),tdistr,type = "l",main = "t distribution, 2 samp test example",xlab = "",ylab = "")
 
-# Ok now use the t.test to perform a two sample t-test. We do not need to set mu, intead we need to 
+# Ok now use the t.test to perform a two-sample t-test. We do not need to set mu, instead we need to 
 # input both samples into t.test(). We also need to specify that the variances of our samples are 
-# equal and that we want a "left" or "lesser" t-test. 
+# equal and that we want a "left" or "lesser" one-sided t-test. 
+t.test(x,y,var.equal=TRUE, alternative = "l")
 
-t.test(x,y,var.equal=TRUE, alternative="l")
 # Do the results of the t-test confirm your suspicions?
 
 # Note the test can also be done without assuming the variances are equal
 
-# In this case the t stat is a bit easier to calculate, just as we had in
-# the presentation.  No pooled sd.  However this test is less accurate than 
-# a testmade with the assumption of equal variances.
-t.test(x,y,var.equal=FALSE, alternative="l")
+# In this case the t stat is a bit easier to calculate.  
+# No pooled sd. However this test is less accurate than 
+# a test made with the assumption of equal variances.
+t.test(x,y,var.equal=FALSE, alternative = "l")
 
 # Due to this approximation the test stat is only approximately t
 # distributed so you only get approximately alpha significance.
-
-# back to slides for a moment
 ```
 Paired T-test
 ```{r}
-# ok we need two samples again. Let's call them x and y again. 
-# set both sample sizes to 200 this time.set the mean of one of x to 10 and the mean of y to 11. 
-# standard deviation for both is 2.5
+# Ok we need two samples again. Let's call them x and y again. 
+# Set both sample sizes to 200. Set the mean of one of x to 10 and the mean of y to 11. 
+# Standard deviation for both is 2.5
 
-x=rnorm(n, mean=10, sd=2.5)
-y=rnorm(n, mean=11, sd=2.5)
+x = rnorm(n, mean = 10, sd = 2.5)
+y = rnorm(n, mean = 11, sd = 2.5)
 
-# ok, so what are our diffs? does the order matter? In this case our HA is that mean(x)<mean(y), so we 
+# Ok, so what are our diffs? does the order matter? In this case our HA is that mean(x)<mean(y), so we 
 # are going to calculate the diffs as x-y with our expectation being that there will be a negative 
 # difference if the null is false. 
   
 the_diffs=x-y
 
-# What's our H0.  Let's say it is that the means are equal again.
+# What's our H0?  Let's say it is that the means are equal again.
 
-# what's our t stat?
+# What's our t stat?
 
-obs_t=mean(the_diffs)/(sd(the_diffs)/sqrt(length(the_diffs)))
+obs_t = mean(the_diffs)/(sd(the_diffs)/sqrt(length(the_diffs)))
 
-# what does our t distribution look like? Where is our observed t value?
+# What does our t distribution look like? Where is our observed t value?
 # What's the likely outcome of our test?
 
-tdistr=dt(seq(-5,5,by=.1),length(the_diffs)-1)
-plot(seq(-5,5,by=.1),tdistr,type="l",main="t distribution, paired test example",xlab="",ylab="")
+tdistr = dt(seq(-5,5,by=.1),length(the_diffs)-1)
+plot(seq(-5,5,by=.1),tdistr,type = "l",main = "t distribution, paired test example",xlab = "",ylab = "")
 
 # What's our Ha?  Let's say that it is mean(x)<mean(y), so we need to look at a
 # rejection region in the left tail of the distribution.
+# Ok, do the test. It's t.test again but this time we are going to specify that they are paired. 
 
-# ok do the test.  it's t.test again but this time we are going to specify that they are paired. 
-
-t.test(x,y,paired=TRUE, alternative="l")
+t.test(x,y,paired = TRUE, alternative = "l")
 ```

@@ -24,16 +24,16 @@ And there are more online... I will mention a few of them as we go. We will also
 # them is to use the R sample.int command with replacement specified. 
 
 # Example for 10 values from 1 - 10:
-print(sample.int(10,10,replace=TRUE))
+print(sample.int(10,10,replace = TRUE))
 
 # Notice how some numbers come up twice while other never come up? that is replacement. 
 
 # So the indices (store in a variable called ind) for our resample can be 
 # found like this:
-ind = sample.int(1550,1550,replace=TRUE) 
+ind = sample.int(1550,1550,replace = TRUE) 
 
 # Or get R to get the size of the sample using length
-ind = sample.int(length(dat),length(dat),replace=TRUE)
+ind = sample.int(length(dat),length(dat),replace = TRUE)
 
 # So to get our resample all we need to do is index dat with ind and assign
 # the result to a new variable.  Call it dat_RS.

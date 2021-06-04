@@ -1,191 +1,198 @@
-Load up dplyr
+# Load up dplyr
 ```{r}
-# We are going to need to load a package called dplyr for this. 
-#If you do not have the dplyr package, then please run install.packages("dplyr")
+# We are going to need to load a package called dplyr for this. If you do not have 
+# the dplyr package, then please run install.packages("dplyr") in the console first.
 library(dplyr)
 ```
 
-Generate some data
+# Generate some data
 Let's generate some data using three different calls to the rnorm function to represent samples from three different populations.
 ```{r}
 # Use a sample size of 20 for all of the samples. Set the mean of the first two samples as 2 and set the 
 # mean of the last sample as 4. Use a standard deviation of 1.5 for all samples. We are going to call
 # the three samples x1, x2, and x3. 
-x1=rnorm(20, mean=2, sd=1.5)
-x2=rnorm(20, mean=2, sd=1.5)
-x3=rnorm(20, mean=4, sd=1.5)
-
-# Lets look at the mean and spread of each of our samples using the boxplot() function. 
+x1 = rnorm(20, mean = 2, sd = 1.5)
+x2 = rnorm(20, mean = 2, sd = 1.5)
+x3 = rnorm(20, mean = 4, sd = 1.5)
+# Let's look at the mean and spread of each of our samples using the boxplot() function. 
 boxplot(x1,x2,x3)
 ```
 
+# Organize Your Data
 The ANOVA function is a little bit different from the other functions in that it works best when your data is organized a certain way. Luckily, this is the way your data will usually be organized after collection anyway.
 ```{r}
-# lets bind the example data together using cbind() and then put it into a dataframe with data.frame(). 
-# let's call our new dataframe data. 
+# Let's bind the example data together using cbind() and then put it into a dataframe with data.frame(). 
+# Let's call our new dataframe data. 
 data = data.frame(cbind(x1,x2,x3))
 
 # Take a look at the dataframe we just made. Right now we have each group organized into a different 
 # column. This format is easy for a person to understand but hard for a computer to understand. It is not
-# tidy. We need to organize it so that the all of the sample values are in the same column with another 
-# column that specifies which group each value belongs to. We can do this very easily with the stack() 
-# function, which automatically organizes our data this way. 
+# tidy. We need to organize it so that all of the sample values are in one column and the group each 
+# value belongs to is in a 2nd column. We can do this very easily with the stack() function which 
+# automatically organizes our data this way. 
 data = stack(data)
-
-# The last thing we are going to do is use dplyr's rename() function to change the column name "ind" to 
-# "group"
-data = rename(data, group=ind)
-
+  
 # look at our reorganized dataframe and think about how it has changed. 
-# now our data is all set for ANOVA!
+View(data)  
+  
+# The last thing we are going to do is use dplyr's rename() function to change the column name "ind" to 
+# "group".
+data = rename(data, group = ind)
+
+# Now our data is all set for ANOVA!
 ```
 
-ANOVA
+# ANOVA
 we are going to learn ANOVA in a kind of backwards way. We are going to start by actually conducting an ANOVA test and then we are going to use R to explore what all of the different outputs mean. 
 
 ```{r}
 # In order to run an ANOVA test, we are going to need to use R's linear regression function lm()
-# Why are we using linear regression for ANOVA? because ANOVA is actually a special application of Linear
-# Regression! We may explore this more in future workshops, but for now do not worry about it. 
+# Why are we using linear regression for ANOVA? Because ANOVA is actually a special application of linear
+# regression! We may explore this more in future workshops, but for now do not worry about it. 
 
-#run help(lm). Focus on the first two arguments. 
+# Run help(lm). Focus on the first two arguments. 
 help(lm)
 
-# wait, what is a formula class object? 
-# Formula class obects are specified using a tilde (~) and are used to specify a relationship between two
-# vectors.
-# Essentially, when you type A~B you are saying thet you want to test if variable A is dependent on B.
+# Wait, what is a formula class object? 
+# Formula class objects are specified using a tilde (~) and are used to specify a relationship between 
+# two vectors.
+# Essentially, when you type A~B you are saying that you want to test if variable A is dependent on B.
 # The first term is the response variable in your data and the second is the explanatory variable. 
 # The specifics of what a formula object actually is in R are complicated and beyond this workshop. 
-# if you want more details, look up ?formula after the workshop.  
+# If you want more details, look up ?formula after the workshop.  
 
-# ok, now we can actually use lm() by specifying the formula and data arguments. run lm and save the 
+# Ok, now we can actually use lm() by specifying the formula and data arguments. Run lm and save the 
 # output in a variable named Av_object
-# Hint: what are our response and explanatory variables? specify the variables using the column names
-Av_object <- lm(values~group,data=data) 
+# Hint: what are our response and explanatory variables? Specify the variables using the column names.
+Av_object = lm(values~group,data = data) 
 
 # Now we are ready to actually run the ANOVA test using the anova() function. 
 anova(Av_object)
+
 ```
 Let's hop over to the slides so we can look at this output more closely. 
 
-The most important output from our table is the F-statistic. The F-statsitc measures the amount of variation in our data that came from differences between our treatment groups versus the amount of variation that came from differences within our treatment groups. From this F statistic we can create an f distribution that allows us to calculate P-values. 
+# The F-statistic
+The most important output from our table is the F-statistic. The F-statistic measures the amount of variation in our data that came from differences between our treatment groups versus the amount of variation that came from differences within our treatment groups. From this F statistic, we can create an f-distribution that allows us to calculate P-values. 
 ```{r}
-# lets create the F distribution using the df function.
-# run help(df) and focus on the first 3 arguments. 
+# Let's create the F distribution using the df function.
+# Run help(df) and focus on the first 3 arguments. 
 help(df)
 
 # It works almost exactly like the dt function but with 2 inputs for degrees of freedom. 
 # df1 is the group degrees of freedom and df2 is for the error degrees of freedom. 
-# go to slide 8 if you need a refresher on how to calculate degrees of freedom. 
-# create a sequence  between 0 and 5 using seq() and call it x. 
-# save you f distribution as a variable called fdist. 
-x=seq(0,6,by=0.001)
-fdistr=df(x,df1 = 2, df2 = 57)
+# Go to slide 8 if you need a refresher on how to calculate degrees of freedom. 
+# Create a sequence between 0 and 5 using seq() and call it x. 
+# Save you f distribution as a variable called fdistr. 
+x = seq(0,6,by = 0.001)
+fdistr = df(x,df1 = 2, df2 = 57)
 
-# Now lets plot the F distribution. Refer back to how we plotted the t-distribution. 
+# Now let's plot the F distribution. Refer back to how we plotted the t-distribution. 
 plot(x,fdistr,type="l",
-     xlim = c(0,5), 
-     ylim = c(0,1),
      xlab="F",
      ylab="Probability Density",
      main =" F distribution with 2 and 57 degrees of freedom (df)")
 
-# append this line of code to the plot function to look at the rejection region
-# +polygon(c(x[x>=3.15], max(x), 3.15), c(fdistr[x>=3.15], 0, 0), col="red")"
+# append this line of code to look at the rejection region.
+# + polygon(c(x[x> = 3.15], max(x), 3.15), c(fdistr[x> = 3.15], 0, 0), col = "red") #
 
-# Scroll back up to our ANOVA table, where does your F value fall on this graph? does it make sense that you were/were'nt able to reject the null?
+# Scroll back up to our ANOVA table, where does your F value fall on this graph? does it make sense 
+# that you were/weren't able to reject the null?
 ```
-Multiple Comparisons
+
+#Multiple Comparisons
 
 There are a large variety of different multiple comparison tests that can be performed in R. These tests use a variety of different techniques to adjust P-values. 
 
 Many multiple comparisons in r utilize a function called pairwise.t.test. This function is used to perform multiple two-sample t-tests between all of the different sample groups, so it does that thing I told you never to do. Luckily, it has an option to adjust the P-values of these t-tests based on different multiple comparison methods. 
 ```{r}
-# try running help(pairwise.t.test)
+# Try running help(pairwise.t.test)
 help(pairwise.t.test)
-# note that rather than using a formula object, you just specify the two columns you are looking at in 
-# your dataframe. 
 
-# for educational purposes, lets do a pairwise t-test with NO P value adjustment whatsoever ("none"). 
-pairwise.t.test(data$values, data$group, p.adj= "none", alternative="two.sided")
+# Note that rather than using a formula object, you just specify the two columns you are looking at in 
+# your dataframe using dataframe$column_name
+
+# For educational purposes, let's do a pairwise t-test with NO p-value adjustment whatsoever ("none"). 
+pairwise.t.test(data$values, data$group, p.adj = "none", alternative = "two.sided")
+
 ```
-Controlling FWER: The Bonferroni method. 
 
-The Bonferroni method is probably the simplest multiple comparison technique. In a nutshell, the bonferroni method is done by just taking taking the alpha value we are using (usually 0.05) and dividing it by the number of tests we are doing. This makes it harder and harder to find significant results as the number of tests we are doing increases. 
+#Controlling FWER: The Bonferroni method. 
+The Bonferroni method is probably the simplest multiple comparison technique. In a nutshell, the Bonferroni method is done by just taking taking the alpha value we are using (usually 0.05) and dividing it by the number of tests we are doing. This makes it harder and harder to find significant results as the number of tests we are doing increases. 
+
 ```{r}
-# now perform a pairwise t-test using the Bonferroni method ("bonf")
-pairwise.t.test(data$values, data$group, p.adj = "bonf",alternative="two.sided")
+# Perform a pairwise t-test using the Bonferroni method ("bonf")
+pairwise.t.test(data$values, data$group, p.adj = "bonf",alternative = "two.sided")
+
 # Can you see the difference between the un-adjusted P-values and the adjusted P-values? 
-# they have been multiplied by the number of tests you did (3)!
+# They have been multiplied by the number of tests you did (3)!
 ```
-Let's look at what is actually happening when we make a bonferroni adjustment. We are going to see what happens to the rejection region of our t-distribution when we conduct 50 seperate tests (all with a sample size of 20) and make the bonferroni adjustment. 
+
+Let's look at what is actually happening when we make a Bonferroni adjustment. We are going to see what happens to the rejection region of our t-distribution when we conduct 50 separate tests (all with a sample size of 20) and make the Bonferroni adjustment. 
 ```{r}
-# create a t-distribution just like what we did in the t-test section.
-x=seq(-5,5,by=0.001)
-tdistr=dt(x,19)
-plot(x,tdistr,type="l",main="t distribution",xlab="t",ylab="Porobability Density") + polygon(c(x[x>=3.85], max(x), 3.85), c(tdistr[x>=3.85], 0, 0), col="red") + abline(v=3.85, col="red")
+# Create a t-distribution just like what we did in the t-test section.
+x = seq(-5,5,by = 0.001)
+tdistr = dt(x,19)
+plot(x,tdistr,type = "l",main = "t distribution",xlab = "t",ylab = "Porobability Density") + polygon(c(x[x>=3.85], max(x), 3.85), c(tdistr[x>=3.85], 0, 0), col = "red") + abline(v = 3.85, col = "red")
 
 # Add the code below to your plot to create a rejection region using our altered P-value. 
 # + polygon(c(x[x>=3.85], max(x), 3.85), c(tdistr[x>=3.85], 0, 0), col="red") #
 # 3.85 is the adjusted critical value for sample size = 20 and 50 tests. 
 
-# can you even see the rejection region? let's draw a line to make it more clear
+# Can you even see the rejection region? let's draw a line to make it more clear.
 # + abline(v=3.85, col="red") #
 
-# look how small it is! You would need a very large effect or a lot of power to find any significant 
+# Look how small it is! You would need a very large effect or a lot of power to find any significant 
 # results. What if we want more power for our experiment? 
 
 ```
 
-The Benjamini-Hochberg (BH) method
+#The Benjamini-Hochberg (BH) method
 
 The Benjamini-Hochberg method is more of an algorithm than an equation. We are going to use tables to visualize how the method decides which P-values are going to stay significant and which we are going to decide are no longer significant. 
-
 
 ```{r}
 # We are going to create a set of P-values that we theoretically could have gotten from performing 10 
 # tests. 
 p_values=c(0.38,0.022,0.45,0.04,0.06,0.008,0.001,0.15,0.013,0.59)
 
-# then, the first step of the Benjamini Hochberg method is to order the P-values from largest to 
+# Then, the first step of the Benjamini Hochberg method is to order the P-values from largest to 
 # smallest. We are going to do this using the sort() function. Call this sorted vector p_sort
 p_sort=sort(p_values)
 
 # Now we are going to create a rank for every p-value. create a list from 1 to 10 using c() and call
-# it rank. 
-rank=c(1,2,3,4,5,6,7,8,9,10)
+# it rank.  
+rank = c(1,2,3,4,5,6,7,8,9,10)
 
 # Now use cbind to bind the rank and the sorted P-values into a dataframe (should be familiar to what we
 # did when creating the dataframe for ANOVA). Call this new dataframe BH_df. 
 BH_df = data.frame(cbind(p_sort,rank))
 
-#The last step is the most important one. We are going to compare our ordered P-values to a set of BH 
-# critical values. BH critical values are calculated as i/m*Q where
+# The last step is the most important one. We are going to compare our ordered P-values to a set of BH 
+# critical values. BH critical values are calculated as i/m*Q where:
 # i = the rank of the test. 
 # m = the total number of tests. 
 # Q equals the false discovery rate we are aiming for (0.05)
-# now, we will use the mutate function to create a new column with the critical values for each test.
+# Now we will use the mutate function to create a new column with the critical values for each test.
 # The mutate function takes the values from other columns and uses an equation to calculate the values 
 # for a new column. 
 # the mutate function is in the form mutate(dataframe, new_column_name = equation)
 BH_df = mutate(BH_df, critical_val = rank/10*0.05)
-BH_df
+print(BH_df)
 
 # Let's look at our dataframe. 
 ```
 
-Now that we know what the test is doing, we can finally run it in R. 
+Now that we know what the BH test is doing, we can just get R to run it. 
 
 ```{r}
-#finally, let's perform a pairwise t-test using the bonferroni adjustment. 
-# we are going to go back to using the data from the three samples we made at the beginning of this 
-# workshop (the one we called data)
+# Let's perform a pairwise t-test using the Benjamini-Hochberg adjustment. 
+# We are going to go back to using the dataframe we made from the three samples we made at the beginning # of this workshop (the one we called data).
 pairwise.t.test(data$values, data$group, p.adj = "BH",alternative="two.sided")
 
-# compare this output to the output we got from the Bonferroni method. 
 ```
+
 ```{r}
-# do the bonferroni adjustment one more time and compare it to the BH method.
+# Do the Bonferroni adjustment one more time and compare it to the BH method.
 pairwise.t.test(data$values, data$group, p.adj = "bonf",alternative="two.sided")
 ```

@@ -11,9 +11,9 @@ Let's generate some data using three different calls to the rnorm function to re
 # Use a sample size of 20 for all of the samples. Set the mean of the first two samples as 2 and set the 
 # mean of the last sample as 4. Use a standard deviation of 1.5 for all samples. We are going to call
 # the three samples x1, x2, and x3. 
-x1=
-x2=
-x3=
+x1 =
+x2 =
+x3 =
 
 # Let's look at the mean and spread of each of our samples using the boxplot() function. 
 
@@ -37,8 +37,8 @@ data =
 View(data)  
   
 # The last thing we are going to do is use dplyr's rename() function to change the column name "ind" to 
-# "group"
-data = rename(data, group=ind)
+# "group".
+data = rename(data, group = ind)
 
 # Now our data is all set for ANOVA!
 ```
@@ -48,8 +48,8 @@ we are going to learn ANOVA in a kind of backwards way. We are going to start by
 
 ```{r}
 # In order to run an ANOVA test, we are going to need to use R's linear regression function lm()
-# Why are we using linear regression for ANOVA? Because ANOVA is actually a special application of Linear
-# Regression! We may explore this more in future workshops, but for now do not worry about it. 
+# Why are we using linear regression for ANOVA? Because ANOVA is actually a special application of linear
+# regression! We may explore this more in future workshops, but for now do not worry about it. 
 
 # Run help(lm). Focus on the first two arguments. 
 
@@ -63,7 +63,7 @@ we are going to learn ANOVA in a kind of backwards way. We are going to start by
 
 # Ok, now we can actually use lm() by specifying the formula and data arguments. Run lm and save the 
 # output in a variable named Av_object
-# Hint: what are our response and explanatory variables? Specify the variables using the column names
+# Hint: what are our response and explanatory variables? Specify the variables using the column names.
 Av_object =
 
 # Now we are ready to actually run the ANOVA test using the anova() function. 
@@ -82,16 +82,16 @@ The most important output from our table is the F-statistic. The F-statistic mea
 # Go to slide 8 if you need a refresher on how to calculate degrees of freedom. 
 # Create a sequence between 0 and 5 using seq() and call it x. 
 # Save you f distribution as a variable called fdistr. 
-x=
-fdistr=
+x =
+fdistr =
 
 # Now let's plot the F distribution. Refer back to how we plotted the t-distribution. 
 
-# Run this line of code to look at the rejection region.
-polygon(c(x[x>=3.15], max(x), 3.15), c(fdistr[x>=3.15], 0, 0), col="red")
+# append this line of code to look at the rejection region.
+# + polygon(c(x[x> = 3.15], max(x), 3.15), c(fdistr[x> = 3.15], 0, 0), col = "red") #
 
-# Scroll back up to our table, where does your F value fall on this graph? does it make sense that you 
-# were/weren't able to reject the null?
+# Scroll back up to our ANOVA table, where does your F value fall on this graph? does it make sense 
+# that you were/weren't able to reject the null?
 ```
 
 #Multiple Comparisons
@@ -111,6 +111,7 @@ Many multiple comparisons in r utilize a function called pairwise.t.test. This f
 
 #Controlling FWER: The Bonferroni method. 
 The Bonferroni method is probably the simplest multiple comparison technique. In a nutshell, the Bonferroni method is done by just taking taking the alpha value we are using (usually 0.05) and dividing it by the number of tests we are doing. This makes it harder and harder to find significant results as the number of tests we are doing increases. 
+
 ```{r}
 # Perform a pairwise t-test using the Bonferroni method ("bonf")
 
@@ -126,7 +127,7 @@ Let's look at what is actually happening when we make a Bonferroni adjustment. W
 # + polygon(c(x[x>=3.85], max(x), 3.85), c(tdistr[x>=3.85], 0, 0), col="red") #
 # 3.85 is the adjusted critical value for sample size = 20 and 50 tests. 
 
-# Can you even see the rejection region? let's draw a line to make it more clear
+# Can you even see the rejection region? let's draw a line to make it more clear.
 # + abline(v=3.85, col="red") #
 
 # Look how small it is! You would need a very large effect or a lot of power to find any significant 
@@ -138,7 +139,6 @@ Let's look at what is actually happening when we make a Bonferroni adjustment. W
 
 The Benjamini-Hochberg method is more of an algorithm than an equation. We are going to use tables to visualize how the method decides which P-values are going to stay significant and which we are going to decide are no longer significant. 
 
-
 ```{r}
 # We are going to create a set of P-values that we theoretically could have gotten from performing 10 
 # tests. 
@@ -146,11 +146,11 @@ p_values=c(0.38,0.022,0.45,0.04,0.06,0.008,0.001,0.15,0.013,0.59)
 
 # Then, the first step of the Benjamini Hochberg method is to order the P-values from largest to 
 # smallest. We are going to do this using the sort() function. Call this sorted vector p_sort
-p_sort=
+p_sort= 
 
 # Now we are going to create a rank for every p-value. create a list from 1 to 10 using c() and call
 # it rank.  
-rank=
+rank =
 
 # Now use cbind to bind the rank and the sorted P-values into a dataframe (should be familiar to what we
 # did when creating the dataframe for ANOVA). Call this new dataframe BH_df. 
@@ -166,7 +166,7 @@ BH_df =
 # for a new column. 
 # the mutate function is in the form mutate(dataframe, new_column_name = equation)
 BH_df = 
-BH_df
+print(BH_df)
 
 # Let's look at our dataframe. 
 ```
@@ -181,4 +181,5 @@ Now that we know what the BH test is doing, we can just get R to run it.
 
 ```{r}
 # Do the Bonferroni adjustment one more time and compare it to the BH method.
+
 ```

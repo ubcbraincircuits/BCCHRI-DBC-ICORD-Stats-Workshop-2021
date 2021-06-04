@@ -64,7 +64,7 @@ we are going to learn ANOVA in a kind of backwards way. We are going to start by
 # Ok, now we can actually use lm() by specifying the formula and data arguments. Run lm and save the 
 # output in a variable named Av_object
 # Hint: what are our response and explanatory variables? Specify the variables using the column names.
-Av_object =
+Av_object = 
 
 # Now we are ready to actually run the ANOVA test using the anova() function. 
 

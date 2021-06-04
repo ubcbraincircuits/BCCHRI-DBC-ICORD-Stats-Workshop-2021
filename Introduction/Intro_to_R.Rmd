@@ -27,7 +27,8 @@ Everything you have been reading up to this point has been part of the markdown 
 ```{r}
 # Hitting the green arrow at the top of the block will run everything in the block, but let's figure out 
 # how to run stuff line be line. 
-# By hitting command + enter, we can run just one line of code. 
+# We can run just one line of code by hitting command + return on a Mac or control + enter for Windows 
+# and Linux. 
 # Run just the 3+6 command below be selecting the line and hitting command+enter.  
 20+40
 3+6

@@ -56,6 +56,7 @@ dat_RS = dat[ind]
 ```
 
 # So now I am going to write you a function to do the resampling for you many times over. 
+You just have to run the entire code-block below to create the function. I encourage you to read through the function and try to figure out how it works, but don't worry if you don't understand everything about it. 
 ```{r}
 # Use 2 inputs. 1. the data, can be called dat 2. the number of resamples, nresamps.
 # Store your resamples in a matrix as output, call it resamps_out. 
@@ -81,8 +82,11 @@ for (i in 1:nresamps) {
     return(resamps_out)
 }
 ```
-# This function returns a 2 dimensional matrix of resamples. What is a 2 dimensional matrix? For our purposes it is a table. Just a table. Sounds fancy. Really boring. 
+Now we have created a function that works just like the functions built into R and found in packages. You can run it just like you would run a function such as mean. For example, make_resamples(dat=dat, nresamps = 5) would take 5 resamples from the dat dataframe. 
 
+The output of this function is a 2 dimensional matrix of resamples. What is a 2 dimensional matrix? For our purposes it is a table. Just a table. Sounds fancy. Really boring. 
+
+# Test out the function. 
 ```{r}
 # Use our function to do 10 resamples. Store the output in a variable called dat_RS. 
 dat_RS =
@@ -95,9 +99,9 @@ dat_RS =
 # Pretty similar??  Should be...
 ```
 
-#Ok, now that we can generate lots of resamples let's look at the distribution of means in our resamples.
+# Ok, now that we can generate lots of resamples let's look at the distribution of means in our resamples.
 ```{r}
-# Let's get 2000 resamples. Store the output in dat_RS again.
+# Let's get 2000 resamples using our function. Store the output in dat_RS again.
 dat_RS =
 
 # Easy to find the mean of the resamples. we are going to use the apply function to calculate the mean  
@@ -258,7 +262,6 @@ x2 =
 # Take a look at each of them using hist.
 
 ```
-
 
 
 ```{r}

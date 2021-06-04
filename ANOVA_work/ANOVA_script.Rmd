@@ -70,7 +70,7 @@ Av_object = lm(values~group,data = data)
 anova(Av_object)
 
 ```
-Let's hop over to the slides so we can look at this output more closely. 
+# Let's hop over to the slides so we can look at this output table more closely. 
 
 # The F-statistic
 The most important output from our table is the F-statistic. The F-statistic measures the amount of variation in our data that came from differences between our treatment groups versus the amount of variation that came from differences within our treatment groups. From this F statistic, we can create an f-distribution that allows us to calculate P-values. 
@@ -99,6 +99,7 @@ plot(x,fdistr,type="l",
 # Scroll back up to our ANOVA table, where does your F value fall on this graph? does it make sense 
 # that you were/weren't able to reject the null?
 ```
+# Let's go back to the slides now. 
 
 #Multiple Comparisons
 
@@ -141,11 +142,10 @@ plot(x,tdistr,type = "l",main = "t distribution",xlab = "t",ylab = "Porobability
 
 # Can you even see the rejection region? let's draw a line to make it more clear.
 # + abline(v=3.85, col="red") #
-
-# Look how small it is! You would need a very large effect or a lot of power to find any significant 
-# results. What if we want more power for our experiment? 
-
 ```
+Look how small it is! You would need a very large effect or a lot of power to find any significant 
+results. What if we want more power for our experiment? 
+# Let's go back to the slides to discuss how we can control error rates without sacrificing as much power
 
 #The Benjamini-Hochberg (BH) method
 

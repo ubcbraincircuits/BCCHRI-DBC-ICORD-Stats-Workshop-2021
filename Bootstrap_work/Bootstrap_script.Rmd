@@ -1,3 +1,12 @@
+Load in the boot package
+```{r}
+# First things first we need to load the boot package.
+# If you have not already installed the boot package, please install it by copying 
+# install.packages("boot") into the console. 
+library(boot)
+# we will use this package extensively later. 
+```
+
 load the distribution
 
 ```{r}
@@ -49,6 +58,7 @@ hist(dat_RS,breaks = 30)
 ```
 
 # So now I am going to write you a function to do the resampling for you many times over. 
+You just have to run the entire code-block below to create the function. I encourage you to read through the function and try to figure out how it works, but don't worry if you don't understand everything about it. 
 ```{r}
 # Use 2 inputs. 1. the data, can be called dat 2. the number of resamples, nresamps.
 # Store your resamples in a matrix as output, call it resamps_out. 
@@ -74,6 +84,7 @@ for (i in 1:nresamps) {
     return(resamps_out)
 }
 ```
+Now we have created a function that works just like the functions built into R and found in packages. You can run it just like you would run a function such as mean. For example, make_resamples(dat=dat, nresamps = 5) would take 5 resamples from the dat dataframe.
 
 # This function returns a 2 dimensional matrix of resamples. What is a 2 dimensional matrix? For our purposes it is a table. Just a table. Sounds fancy. Really boring. 
 ```{r}
@@ -143,8 +154,7 @@ output = boot(data = dat,statistic = samplemean,R = 2000)
 dist = output$t
 ```
 Now that we have the bootstrap distribution, we can use it to estimate all kinds of useful stuff. 
-
-Let's head back to the slides for now to see what we can use the distribution for. 
+# Let's head back to the slides for now to see what we can use the distribution for. 
 
 # Standard error
 ```{r}
@@ -208,6 +218,7 @@ bca_ci = boot.ci(output, type = "bca")
 # Print bca_ci. 
 print(bca_ci)
 ```
+# Let's head back to the slides now. 
 
 #Permutation testing.
 Before we get into Permutation testing, I am going to remake my resampling function so that we can get resamples with a specific number of data points. I am going to call it make_resamples2
@@ -245,7 +256,7 @@ resamps_out = matrix(nrow = nresamps,ncol = nsamps)
 
 ```
 
-Permutation testing.
+Ok, now let's actually do the Permutation test.
 
 ```{r}
 # Let's make a couple of normal samples.  Call them x1 and x2.

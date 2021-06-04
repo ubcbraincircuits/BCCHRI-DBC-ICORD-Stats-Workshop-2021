@@ -23,10 +23,10 @@ print(x)
 sample = rnorm(5000, mean = 10, sd = 2.5)
 hist(sample, breaks = 30, xlab = "Histogram of Samples")
 ```
-This shape probably looks familiar to most of you. This is a normal distribution. It is going to come up a lot for reasons we are about to go over. Let's go back to the slides now. 
+This shape probably looks familiar to most of you. This is a normal distribution. It is going to come up a lot for reasons we are about to go over. 
+# Let's go back to the slides now. 
 
-
-The t statistic and the t distribution. 
+# The t statistic and the t distribution. 
 ```{r}
 # What does our t distribution look like?
 x = seq(-5,5,by = 0.001)
@@ -106,10 +106,10 @@ h_out/N_iter
 # It should be close to our significance level!  If H0 is true and we
 # reject the Null we are out in the tail of distribution by chance.  And
 # alpha is the probability of that!
-
-# Ok that's all for now.  Go back to slides.
 ```
-Two sample T-test.
+# Ok that's all for now.  Go back to slides.
+
+# Two sample T-test.
 ```{r}
 # First make 2 large samples using rnorm again. let's say 200 and 400 samples each. 
 # Call the variables x and y.The mean of x will be 10 and the mean of y will be 11. 
@@ -179,7 +179,7 @@ t.test(x,y,var.equal=FALSE, alternative = "l")
 # Due to this approximation the test stat is only approximately t
 # distributed so you only get approximately alpha significance.
 ```
-Paired T-test
+# Paired T-test
 ```{r}
 # Ok we need two samples again. Let's call them x and y again. 
 # Set both sample sizes to 200. Set the mean of one of x to 10 and the mean of y to 11. 

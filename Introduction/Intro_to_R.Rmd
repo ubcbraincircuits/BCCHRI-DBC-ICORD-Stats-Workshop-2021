@@ -43,9 +43,9 @@ Ok, now let's learn how to actually do some stuff with R.
 #Whenever we calculate or create something in R, we can save what we made as a variable to be used later.
 # we do this by specifying a variable name and then saying it is equal to something we make. 
 # For example
-x=2+2
+x = 2+2
 
-#We have saved the output of 2+2 in a variable called a, now we can look at the variable using print()
+#We have saved the output of 2+2 in a variable called x, now we can look at the variable using print()
 print(x)
 ```
 
@@ -89,7 +89,7 @@ x=c(1,2,4,7,NA,4,3,7,9,5)
 mean(x,0.1,TRUE)
 
 # B) specify the values we want for each argument in any order we like.
-mean(x=x, na.rm=TRUE, trim=0.1)
+mean(x=x, na.rm = TRUE, trim = 0.1)
 ```
 
 # Packages:
@@ -128,7 +128,7 @@ data = data.frame(name=c("Sam","Mike"), height_cm=c(197,155))
 View(data)
 
 # We can select one of our columns using dataframe$column_name
-data$Mike
+data$height_cm
 
 # and we can select a row using dataframe[row_number,]
 data[1,]
@@ -140,8 +140,8 @@ data[1,]
 # it, so we are going to be using that today.
 
 # Let's make a couple of vectors
-x=c(1,5,8,3,7,3,5,3,6,4,7)
-y=c(1,4,7,3,8,9,5,4,3,6,3)
+x = c(1,5,8,3,7,3,5,3,6,4,7)
+y = c(1,4,7,3,8,9,5,4,3,6,3)
 
 # We can make a histogram using one vector as inputs using hist()
 hist(x)
@@ -153,7 +153,7 @@ plot(x,y)
 barplot(data$height_cm, names.arg=data$name)
 ```
 #A note on doing stuff in R:
-There are often many different ways to do things in R. Sometimes one way is more or efficient or better than other ways, but it is often the case where multiple different solutions are equally good. If you do something in this workshop that is a little different from how I do it in the answer sheet, you should not worry about it too much as long as your answer still makes sense :) 
+There are often many different ways to do things in R. Sometimes one way is more efficient or better than other ways, but it is often the case where multiple different solutions are equally good. If you do something in this workshop that is a little different from how I do it in the answer sheet, you should not worry about it too much as long as your answer still makes sense :) 
 
 
 

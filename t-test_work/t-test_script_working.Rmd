@@ -32,7 +32,7 @@ tdistr = dt(x,19)
 plot(x,tdistr,type = "l",main = "t distribution",xlab = "t",ylab = "Probability Density")
 
 # Look at the plot and then append the code below to your plot to create a rejection region. 
-# + polygon(c(x[x  >= 1.73], max(x), 1.73), c(tdistr[x> = 1.73], 0, 0), col = "red") #
+# + polygon(c(x[x  >= 1.73], max(x), 1.73), c(tdistr[x >= 1.73], 0, 0), col = "red") #
 ```
 What we just did is sort of like a manual version of conducting a t-test. R has a whole bunch of built in machinery that makes doing t-tests much simpler. Let's actually do a t-test now. 
 

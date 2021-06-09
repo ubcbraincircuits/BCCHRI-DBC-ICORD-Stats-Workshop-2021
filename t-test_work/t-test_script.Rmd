@@ -16,7 +16,6 @@ plot(x,y,type = 'l', main = "Example of a sampling distribution", ylab = 'Probab
 # variable called sample.
 help(rnorm)
 sample = rnorm(1, mean = 10, sd = 2.5)
-print(x)
 
 #Now let's draw 5000 samples from an identical distribution and see what they look like using the 
 #hist() function. Store these samples in a variable called sample again. Try help(hist) if stuck.
@@ -30,11 +29,11 @@ This shape probably looks familiar to most of you. This is a normal distribution
 ```{r}
 # What does our t distribution look like?
 x = seq(-5,5,by = 0.001)
-tdistr = dt(x,17)
-plot(x,tdistr,type = "l",main = "t distribution",xlab = "t",ylab = "Porobability Density") 
+tdistr = dt(x,19)
+plot(x,tdistr,type = "l",main = "t distribution",xlab = "t",ylab = "Porobability Density") + polygon(c(x[x >= 1.73], max(x), 1.73), c(tdistr[x >= 1.73], 0, 0), col = "red")
 
 # Look at the plot and then append the code below to your plot to create a rejection region. 
-# + polygon(c(x[x> = 1.73], max(x), 1.73), c(tdistr[x> = 1.73], 0, 0), col = "red") #
+# + polygon(c(x[x >= 1.73], max(x), 1.73), c(tdistr[x >= 1.73], 0, 0), col = "red") #
 
 
 ```

@@ -13,6 +13,7 @@ load the distribution
 load("dat.rda")
 #this is something non-gaussian that I made up.  Meant to mimic a non-normal sample data set with 1550  
 #data points. Let's take a look at it using hist.
+hist(dat)
 ```
 
 # NB: R has some built in functions for doing resampling, bootstrapping, etc.
@@ -50,6 +51,7 @@ dat_RS = dat[ind]
 
 # look at dat_RS.
 # Take a look at our resample Using hist().
+hist(dat_RS)
 
 # Unless you get a peculiar resample it should look pretty much like the
 # original sample.
@@ -91,7 +93,7 @@ The output of this function is a 2 dimensional matrix of resamples. What is a 2 
 # Use our function to do 10 resamples. Store the output in a variable called dat_RS. 
 dat_RS =
 
-# Let's look at a couple of our resamples. 
+# Let's look at a couple of our resamples using hist(). 
 # We can access a single resample by using notation like this dat_RS[ind,]
 # Look at however many you want (at least 2).
   
@@ -122,8 +124,7 @@ What is this distribution we just made?
 It is the bootstrap distribution of the sample mean. It represents an estimation of the sampling 
 distribution. 
 
-Let's try it again, this time using R's most popular bootstrapping package which is creatively named 
-boot. 
+# Let's try it again, this time using R's most popular bootstrapping package which is creatively named boot. 
 ```{r}
 # Check the boot package doc using help("boot") There is a lot of information in this help file, but you 
 # should focus on the first 3 inputs. 

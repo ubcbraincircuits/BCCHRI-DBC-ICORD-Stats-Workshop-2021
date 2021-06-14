@@ -29,7 +29,7 @@ This shape probably looks familiar to most of you. This is a normal distribution
 # What does our t distribution look like?
 x = seq(-5,5,by = 0.001)
 tdistr = dt(x,19)
-plot(x,tdistr,type = "l",main = "t distribution",xlab = "t",ylab = "Probability Density")
+plot(x,tdistr,type = "l",main = "t distribution",xlab = "t",ylab = "Probability Density") + polygon(c(x[x  >= 1.73], max(x), 1.73), c(tdistr[x >= 1.73], 0, 0), col = "red")
 
 # Look at the plot and then append the code below to your plot to create a rejection region. 
 # + polygon(c(x[x  >= 1.73], max(x), 1.73), c(tdistr[x >= 1.73], 0, 0), col = "red") #
@@ -114,8 +114,8 @@ y =
 # Very cute, but let's reduce the number of data points to make this a
 # little more messy, I mean realistic. Let's do sample sizes of x = 20 and y = 40 (same sd).
 
-x =
-y =
+x = rnorm(20, 10, 2.5)
+y = rnorm(40, 11, 2.5)
 
 # Look at them using hist().
 
